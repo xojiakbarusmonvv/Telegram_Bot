@@ -1,13 +1,17 @@
+import os
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
 from telegram import Update
 from telegram.ext import Application, MessageHandler, ContextTypes, filters
 from groq import Groq
 
-TELEGRAM_TOKEN = "8899959377:AAH7pjr7P--f2ZU1U53XRx856B6n3aRvGiE"
-GROQ_API_KEY = "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"
+
+TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
+GROQ_API_KEY = os.environ["GROQ_API_KEY"]
 
 client = Groq(api_key=GROQ_API_KEY)
 
-# Har bir odam uchun alohida suhbat
 histories = {}
 
 SYSTEM_PROMPT = """
@@ -19,6 +23,7 @@ mavzularda yordam ber.
 Oddiy suhbatda samimiy gaplash.
 Keraksiz uzun javob bermagin.
 """
+
 
 async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -34,7 +39,6 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "content": text
     })
 
-    # Oxirgi suhbatlarni yuboramiz
     messages = histories[user_id][-21:]
 
     try:
@@ -62,11 +66,30 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Telegram bot ishlayapti!")
+
+    def log_message(self, format, *args):
+        pass
+
+
+def start_web_server():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(("0.0.0.0", port), HealthHandler)
+    server.serve_forever()
+
+
+threading.Thread(target=start_web_server, daemon=True).start()
+
 app = Application.builder().token(TELEGRAM_TOKEN).build()
 
 app.add_handler(
     MessageHandler(filters.TEXT & ~filters.COMMAND, chat)
 )
 
-print("BOT ISHLAYAPTI!")
+print("BOTIMIZ_ISHLAYAPTI!")
+
 app.run_polling()
