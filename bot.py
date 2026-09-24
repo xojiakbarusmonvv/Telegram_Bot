@@ -1,3 +1,4 @@
+import asyncio
 import os
 import random
 import re
@@ -28,6 +29,7 @@ except FileNotFoundError:
     print(f"OGOHLANTIRISH: {RULES_FILE} topilmadi")
 
 histories = {}
+HISTORY_LIMIT = 10  # API'ga yuboriladigan va xotirada saqlanadigan oxirgi xabarlar soni
 
 FUN_FACTS = [
     "Ahtapotning uchta yuragi bor.",
@@ -273,13 +275,21 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         histories[user_id] = [{"role": "system", "content": SYSTEM_PROMPT}]
 
     histories[user_id].append({"role": "user", "content": text})
+    # Xotirada ham faqat oxirgi HISTORY_LIMIT ta xabarni saqlaymiz (system promptdan tashqari),
+    # aks holda uzoq muddat ishlagan botda RAM cheksiz o'sib ketadi.
+    histories[user_id] = [histories[user_id][0]] + histories[user_id][1:][-HISTORY_LIMIT:]
+
     messages = [histories[user_id][0], {
         "role": "system",
         "content": "Savolga tegishli qoidalar matni:\n" + relevant,
-    }] + histories[user_id][-10:]
+    }] + histories[user_id][1:]
 
     try:
-        response = client.chat.completions.create(
+        # Groq SDK sinxron (blocking) klient, shuning uchun uni alohida thread'da
+        # chaqiramiz — aks holda bu qator ishlayotganda butun bot barcha
+        # foydalanuvchilar uchun to'xtab qoladi.
+        response = await asyncio.to_thread(
+            client.chat.completions.create,
             model=MODEL,
             messages=messages,
             tools=[{"type": "browser_search"}],
