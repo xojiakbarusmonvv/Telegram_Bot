@@ -30,17 +30,26 @@ histories = {}
 
 
 # ==================================================
-# FAQAT GRAND MOBILE ADMINLIK REJIMI
+# UNIVERSAL REJIM + GRAND MOBILE MAXSUS QOIDALAR REJIMI
 # ==================================================
 SYSTEM_PROMPT = """
-Sen faqat GRAND MOBILE o'yini bo'yicha adminlik va server qoidalari maslahatchisisan.
-Boshqa o'yinlar, umumiy AI yordamchisi, dasturlash, matematika, siyosat, tibbiyot,
-retsept, tarjima yoki boshqa mavzulardagi savollarga javob bermaysan. Muloyim tarzda:
-'Men faqat Grand Mobile adminligi va server qoidalari bo'yicha javob beraman' deb ayt.
+Sen universal, aqlli va foydali AI yordamchisan. O'zbek tilida javob ber, foydalanuvchi
+boshqa tilda yozsa o'sha tilda javob ber. Oddiy suhbat, tarjima, dasturlash, matematika,
+texnika, ta'lim, matn yozish va boshqa foydali mavzularda yordam ber.
 
-Asosiy manba — foydalanuvchi xabariga qo'shib berilgan GRAND MOBILE qoidalar matni.
-Javobni faqat shu manbaga tayangan holda ber. Bandni o'ylab topma va jazo muddatini
-manbada yo'q bo'lsa taxmin qilma.
+JAVOB BERISH USLUBI:
+- Avval savolga to'g'ridan-to'g'ri javob ber, keraksiz kirish va takrorni yozma.
+- Oddiy savolga qisqa va aniq javob ber; murakkab savolga tartibli qadamlar bilan javob ber.
+- Foydalanuvchi bilan tabiiy, sodda va hurmatli tilda gaplash.
+- Ishonching komil bo'lmasa, buni ochiq ayt; hech qachon fakt, havola yoki bandni o'ylab topma.
+- Yangilanadigan ma'lumotlar (yangilik, narx, versiya, sana, qonun, sport natijasi va h.k.)
+  uchun internet qidiruvidan foydalan. Javob oxirida kerak bo'lsa manbalarni ko'rsat.
+
+GRAND MOBILE MAXSUS REJIMI:
+Foydalanuvchi Grand Mobile, adminlik, server qoidasi yoki o'yin ichidagi vaziyat haqida
+so'rasa, asosiy manba — xabarga qo'shib berilgan GRAND MOBILE qoidalar matni.
+Qoidalar bandini o'ylab topma va manbada yo'q jazo muddatini taxmin qilma. Agar savolda
+1.1, 4.1 kabi band raqami aytilsa, aynan o'sha bandni tushuntir.
 
 Foydalanuvchi vaziyatli savol bersa:
 1) vaziyat qaysi qoidabuzarlikka o'xshashini ayt;
@@ -49,6 +58,9 @@ Foydalanuvchi vaziyatli savol bersa:
 4) manbada ko'rsatilgan jazoni aynan yoz;
 5) agar faktlar yetarli bo'lmasa, aniqlashtiruvchi savol ber;
 6) yakuniy jazo qarorini server ma'muriyati/kuratori berishini eslat.
+
+Grand Mobile mavzusiga aloqasi bo'lmagan savollarda qo'shilgan qoidalar matnini e'tiborga
+olma va odatdagi universal yordamchi sifatida javob ber.
 
 Agar bir nechta band mos kelsa, eng mos bandni birinchi ko'rsatib, qolgan ehtimoliy
 bandlarni ham sanab o't. IC/OOC, RP, GZ, DM, DB, SK, RK, MG, PG kabi atamalarni
@@ -74,6 +86,21 @@ RULE_CHUNKS = rule_chunks(RULES_TEXT)
 
 def find_relevant_rules(question: str, limit: int = 8) -> str:
     """Savolga eng yaqin bandlarni keyword qidiruvi bilan topadi."""
+    # Masalan: "1.1 band nima?" — raqamning o'zi bo'yicha aniq qidiruv.
+    requested_bands = re.findall(r"\b(\d+(?:\.\d+)+)\s*(?:-?band|bandi)?\b", question.lower())
+    if requested_bands:
+        exact = []
+        for band in requested_bands:
+            match = re.search(
+                rf"(?m)^\s*{re.escape(band)}\s+.*?(?=\n\s*\d+(?:\.\d+)*\s+|\Z)",
+                RULES_TEXT,
+                flags=re.DOTALL,
+            )
+            if match:
+                exact.append(match.group(0).strip())
+        if exact:
+            return "\n\n--- ANIQ SO'RALGAN QOIDA BANDI ---\n".join(exact[:limit])
+
     normalized_question = normalize(question)
     words = {word for word in normalized_question.split() if len(word) >= 3}
     scored = []
@@ -96,8 +123,9 @@ def find_relevant_rules(question: str, limit: int = 8) -> str:
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Salom! Men faqat Grand Mobile adminligi va server qoidalari bo'yicha botman.\n\n"
-        "Vaziyatni yozing: masalan, 'GZda o'q uzsa qaysi band?' yoki /qoidalar buyrug'idan foydalaning."
+        "Salom! Men universal AI yordamchiman. Grand Mobile adminligi va server qoidalari "
+        "bo'yicha ham bandma-band javob beraman.\n\n"
+        "Savolingizni yozing: masalan, 'GZda o'q uzsa qaysi band?' yoki oddiy boshqa savol bering."
     )
 
 
@@ -131,6 +159,9 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         response = client.chat.completions.create(
             model=MODEL,
             messages=messages,
+            tools=[{"type": "browser_search"}],
+            tool_choice="auto",
+            reasoning_effort="low",
             temperature=0.2,
             max_completion_tokens=1200,
             stream=False,
