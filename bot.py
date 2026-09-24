@@ -1,4 +1,5 @@
 import os
+import random
 import re
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -27,6 +28,41 @@ except FileNotFoundError:
     print(f"OGOHLANTIRISH: {RULES_FILE} topilmadi")
 
 histories = {}
+
+FUN_FACTS = [
+    "Ahtapotning uchta yuragi bor.",
+    "Asalarilar raqs orqali bir-biriga oziq-ovqat joyini ko'rsatadi.",
+    "Bananning botanika bo'yicha rezavor meva hisoblanishini bilarmidingiz?",
+    "Yorug'lik Quyoshdan Yerga taxminan 8 daqiqada yetib keladi.",
+    "Inson miyasi uxlayotganda ham ma'lumotlarni qayta ishlaydi.",
+]
+
+JOKES = [
+    "Dasturchi choy ichgani bordi. Choy tugadi, lekin u hali ham 'loading...' holatida.",
+    "Kompyuter nega shifokorga bordi? Chunki virus yuqtirib olgan ekan.",
+    "Adminning eng sevimli gapi: 'Qoidani o'qib chiqing'.",
+]
+
+DAILY_TASKS = [
+    "Bugun yangi bir narsani o'rganing va uni do'stingizga tushuntiring.",
+    "10 daqiqa telefondan uzoqlashing va rejalaringizni yozib chiqing.",
+    "Bugun bir kishiga foydali yordam bering.",
+    "Grand Mobile'da qoidalarni buzmasdan eng yaxshi RP vaziyatni yarating.",
+]
+
+THIS_OR_THAT = [
+    "Choymi yoki kofe?",
+    "Telefonmi yoki kompyuter?",
+    "Grand Mobile'da boylikmi yoki kuchli RP?",
+    "Kinomi yoki serial?",
+]
+
+QUIZES = [
+    ("O'zbekiston poytaxti qaysi shahar?", "Toshkent"),
+    ("Grand Mobile'da DM nimani anglatadi?", "DeathMatch"),
+    ("Yerning tabiiy yo'ldoshi nima?", "Oy"),
+    ("Python'da matn chiqarish funksiyasi nima?", "print"),
+]
 
 
 # ==================================================
@@ -166,6 +202,44 @@ async def rules_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Funksiyalar:\n"
+        "/start — botni boshlash\n"
+        "/qoidalar — Grand Mobile qoidalari\n"
+        "/fakt — qiziqarli fakt\n"
+        "/hazil — qisqa hazil\n"
+        "/topshiriq — kunlik foydali topshiriq\n"
+        "/tanlov — bu yoki u savoli\n"
+        "/viktorina — mini savol-javob\n\n"
+        "Bundan tashqari, istalgan savolingizni oddiy yozishingiz mumkin."
+    )
+
+
+async def fact_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Qiziqarli fakt: " + random.choice(FUN_FACTS))
+
+
+async def joke_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(random.choice(JOKES))
+
+
+async def task_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Bugungi topshiriq: " + random.choice(DAILY_TASKS))
+
+
+async def choice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Tanlov: " + random.choice(THIS_OR_THAT))
+
+
+async def quiz_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    question, answer = random.choice(QUIZES)
+    context.user_data["quiz_answer"] = answer.lower()
+    await update.message.reply_text(
+        "Mini-viktorina:\n" + question + "\n\nJavobingizni yozing."
+    )
+
+
 async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
@@ -173,6 +247,16 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     text = update.message.text.strip()
     if not text:
+        return
+
+    quiz_answer = context.user_data.pop("quiz_answer", None)
+    if quiz_answer:
+        if quiz_answer in text.lower():
+            await update.message.reply_text("To'g'ri javob! Barakalla.")
+        else:
+            await update.message.reply_text(
+                f"Bu safar xato. To'g'ri javob: {quiz_answer}"
+            )
         return
 
     relevant = find_relevant_rules(text)
@@ -231,6 +315,12 @@ threading.Thread(target=start_web_server, daemon=True).start()
 app = Application.builder().token(TELEGRAM_TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("qoidalar", rules_command))
+app.add_handler(CommandHandler("yordam", help_command))
+app.add_handler(CommandHandler("fakt", fact_command))
+app.add_handler(CommandHandler("hazil", joke_command))
+app.add_handler(CommandHandler("topshiriq", task_command))
+app.add_handler(CommandHandler("tanlov", choice_command))
+app.add_handler(CommandHandler("viktorina", quiz_command))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, chat))
 
 print("GRAND MOBILE ADMIN BOT ISHLAYAPTI!")
