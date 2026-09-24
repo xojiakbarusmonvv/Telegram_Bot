@@ -1,316 +1,176 @@
 import os
+import re
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from telegram import Update
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    MessageHandler,
-    ContextTypes,
-    filters,
-)
 from groq import Groq
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
 
 
 # ==================================================
-# API KALITLARI
+# SOZLAMALAR
 # ==================================================
-
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
 GROQ_API_KEY = os.environ["GROQ_API_KEY"]
+MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
 
 client = Groq(api_key=GROQ_API_KEY)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+RULES_FILE = os.path.join(BASE_DIR, "grand_mobile_qoidalari.txt")
 
-
-# ==================================================
-# SUHBAT TARIXI
-# ==================================================
+try:
+    with open(RULES_FILE, "r", encoding="utf-8") as file:
+        RULES_TEXT = file.read()
+except FileNotFoundError:
+    RULES_TEXT = ""
+    print(f"OGOHLANTIRISH: {RULES_FILE} topilmadi")
 
 histories = {}
 
 
 # ==================================================
-# AI XARAKTERI
+# FAQAT GRAND MOBILE ADMINLIK REJIMI
 # ==================================================
-
 SYSTEM_PROMPT = """
-Sen universal, aqlli va do'stona AI yordamchisan.
+Sen faqat GRAND MOBILE o'yini bo'yicha adminlik va server qoidalari maslahatchisisan.
+Boshqa o'yinlar, umumiy AI yordamchisi, dasturlash, matematika, siyosat, tibbiyot,
+retsept, tarjima yoki boshqa mavzulardagi savollarga javob bermaysan. Muloyim tarzda:
+'Men faqat Grand Mobile adminligi va server qoidalari bo'yicha javob beraman' deb ayt.
 
-Foydalanuvchi bilan asosan o'zbek tilida gaplash.
-Agar foydalanuvchi boshqa tilda yozsa, o'sha tilda javob ber.
+Asosiy manba — foydalanuvchi xabariga qo'shib berilgan GRAND MOBILE qoidalar matni.
+Javobni faqat shu manbaga tayangan holda ber. Bandni o'ylab topma va jazo muddatini
+manbada yo'q bo'lsa taxmin qilma.
 
-Foydalanuvchi qanday savol bersa, imkon qadar yordam ber.
-O'zingni faqat oldindan sanab o'tilgan mavzular bilan cheklama.
+Foydalanuvchi vaziyatli savol bersa:
+1) vaziyat qaysi qoidabuzarlikka o'xshashini ayt;
+2) aniq band raqami va band nomini ko'rsat;
+3) banddagi taqiqni sodda tilda tushuntir;
+4) manbada ko'rsatilgan jazoni aynan yoz;
+5) agar faktlar yetarli bo'lmasa, aniqlashtiruvchi savol ber;
+6) yakuniy jazo qarorini server ma'muriyati/kuratori berishini eslat.
 
-Sen quyidagilarda yordam bera olasan:
+Agar bir nechta band mos kelsa, eng mos bandni birinchi ko'rsatib, qolgan ehtimoliy
+bandlarni ham sanab o't. IC/OOC, RP, GZ, DM, DB, SK, RK, MG, PG kabi atamalarni
+kerak bo'lsa qisqacha izohla.
 
-- Oddiy suhbat
-- Savollarga javob
-- Matematika
-- Fizika
-- Kimyo
-- Biologiya
-- Tarix
-- Geografiya
-- Informatika
-- Maktab va universitet fanlari
-- Uy vazifalarini tushuntirish
-- Ingliz tili
-- Xitoy tili
-- Rus tili
-- Koreys tili
-- Arab tili
-- Boshqa tillar
-- Tarjima
-- So'z ma'nosi
-- Talaffuz
-- Grammatika
-- Til o'rgatish
-- Insho
-- Referat
-- Maqola
-- Hikoya
-- She'r
-- Ssenariy
-- Email
-- Telegram xabarlari
-- Matnni tuzatish
-- Matnni qisqartirish
-- Matnni chiroyli qilish
-- Reja tuzish
-- G'oya berish
-- Biznes g'oyalari
-- Dasturlash
-- Python
-- JavaScript
-- HTML
-- CSS
-- Telegram bot
-- GitHub
-- Render
-- Kompyuter muammolari
-- Telefon muammolari
-- Internet muammolari
-- Texnologiya
-- AI
-- Sayohat
-- Retseptlar
-- Sport
-- Kitoblar
-- Filmlar
-- Musiqa
-- O'yinlar
-- Mantiqiy masalalar
-- Va boshqa ko'plab mavzular.
-
-Agar foydalanuvchi biror narsani tushunmasa,
-juda sodda qilib qayta tushuntir.
-
-Texnik muammolarda qadam-baqadam yo'l ko'rsat.
-
-Agar savol hozirgi yoki yangilanadigan ma'lumotni talab qilsa,
-internet qidiruvidan foydalan.
-
-Internetdan topilmagan ma'lumotni o'ylab topma.
-Ishonching komil bo'lmasa, buni ayt.
-
-Foydalanuvchining oldingi xabarlaridan foydalanib,
-suhbatni davom ettir.
-
-Javoblaring tabiiy, aniq, foydali va do'stona bo'lsin.
-
-Oddiy savollarga qisqa javob ber.
-Murakkab savollarga bosqichma-bosqich javob ber.
+Javoblar o'zbek tilida, qisqa, aniq va hurmatli bo'lsin. Ma'muriyat nomidan yakuniy
+hukm chiqarmaysan; faqat qoidani tushuntirasan.
 """
 
 
-# ==================================================
-# /START BUYRUG'I
-# ==================================================
+def normalize(text: str) -> str:
+    text = text.lower().replace("oʻ", "o'").replace("gʻ", "g'")
+    return re.sub(r"[^a-z0-9'ʼ\s-]", " ", text)
+
+
+def rule_chunks(text: str):
+    chunks = re.split(r"(?=\n\s*(?:\d+(?:\.\d+)*|[IVX]+\.)\s+)", text)
+    return [chunk.strip() for chunk in chunks if len(chunk.strip()) > 40]
+
+
+RULE_CHUNKS = rule_chunks(RULES_TEXT)
+
+
+def find_relevant_rules(question: str, limit: int = 8) -> str:
+    """Savolga eng yaqin bandlarni keyword qidiruvi bilan topadi."""
+    normalized_question = normalize(question)
+    words = {word for word in normalized_question.split() if len(word) >= 3}
+    scored = []
+
+    for chunk in RULE_CHUNKS:
+        normalized_chunk = normalize(chunk)
+        score = sum(1 for word in words if word in normalized_chunk)
+        for term in ("dm", "gz", "rmt", "rp", "mg", "pg", "db", "sk", "rk", "mute", "ban", "report", "admin"):
+            if re.search(rf"\b{re.escape(term)}\b", normalized_question) and re.search(rf"\b{re.escape(term)}\b", normalized_chunk):
+                score += 4
+        if score:
+            scored.append((score, chunk))
+
+    scored.sort(key=lambda item: item[0], reverse=True)
+    selected = [chunk for _, chunk in scored[:limit]]
+    if not selected:
+        return "Mos band topilmadi. Savolni Grand Mobile vaziyati va joyi bilan aniqroq yozing."
+    return "\n\n--- MOS QOIDA BANDI ---\n".join(selected)
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     await update.message.reply_text(
-        "Salom! 👋\n\n"
-        "Men sizga turli mavzularda yordam bera oladigan AI botman.\n\n"
-        "Savolingizni yozing — boshlaymiz! 🤖"
+        "Salom! Men faqat Grand Mobile adminligi va server qoidalari bo'yicha botman.\n\n"
+        "Vaziyatni yozing: masalan, 'GZda o'q uzsa qaysi band?' yoki /qoidalar buyrug'idan foydalaning."
     )
 
 
-# ==================================================
-# TELEGRAM XABARLARI
-# ==================================================
+async def rules_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Grand Mobile qoidalari bo'yicha savolingizni vaziyat bilan yozing.\n"
+        "Masalan: 'O'yinchi reportni flood qilsa qaysi band va jazo?'"
+    )
+
 
 async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    if not update.message:
-        return
-
-    if not update.message.text:
+    if not update.message or not update.message.text:
         return
 
     user_id = update.effective_user.id
     text = update.message.text.strip()
-
     if not text:
         return
 
-    # Yangi foydalanuvchi uchun tarix
+    relevant = find_relevant_rules(text)
     if user_id not in histories:
-        histories[user_id] = [
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT,
-            }
-        ]
+        histories[user_id] = [{"role": "system", "content": SYSTEM_PROMPT}]
 
-    # Foydalanuvchi xabarini saqlash
-    histories[user_id].append(
-        {
-            "role": "user",
-            "content": text,
-        }
-    )
-
-    # Oxirgi suhbatlarni yuborish
-    messages = histories[user_id][-21:]
+    histories[user_id].append({"role": "user", "content": text})
+    messages = [histories[user_id][0], {
+        "role": "system",
+        "content": "Savolga tegishli qoidalar matni:\n" + relevant,
+    }] + histories[user_id][-10:]
 
     try:
-
         response = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
-
+            model=MODEL,
             messages=messages,
-
-            # Internet qidiruvi mavjud
-            tools=[
-                {
-                    "type": "browser_search"
-                }
-            ],
-
-            # MUHIM:
-            # required emas, auto bo'lishi kerak.
-            # AI kerak bo'lsa internetdan qidiradi.
-            # Oddiy savollarda esa qidirmaydi.
-            tool_choice="auto",
-
-            reasoning_effort="low",
-
-            temperature=1,
-
-            max_completion_tokens=2048,
-
+            temperature=0.2,
+            max_completion_tokens=1200,
             stream=False,
         )
+        answer = response.choices[0].message.content or "Kechirasiz, javob tayyor bo'lmadi."
+        histories[user_id].append({"role": "assistant", "content": answer})
 
-        answer = response.choices[0].message.content
-
-        if not answer:
-            answer = "Kechirasiz, hozir javob tayyor bo'lmadi."
-
-        # AI javobini tarixga saqlash
-        histories[user_id].append(
-            {
-                "role": "assistant",
-                "content": answer,
-            }
-        )
-
-        # Telegram 4096 belgidan uzun xabarni qabul qilmaydi
-        max_length = 4000
-
-        for i in range(0, len(answer), max_length):
-
-            await update.message.reply_text(
-                answer[i:i + max_length]
-            )
-
-    except Exception as e:
-
-        print("XATOLIK:", repr(e))
-
+        for i in range(0, len(answer), 4000):
+            await update.message.reply_text(answer[i:i + 4000])
+    except Exception as error:
+        print("XATOLIK:", repr(error))
         await update.message.reply_text(
-            "Kechirasiz, hozir javob berishda muammo bo'ldi. "
-            "Birozdan keyin yana urinib ko'ring."
+            "Javob berishda texnik xatolik yuz berdi. Keyinroq yana urinib ko'ring."
         )
 
 
 # ==================================================
-# RENDER WEB SERVER
+# RENDER HEALTH CHECK
 # ==================================================
-
 class HealthHandler(BaseHTTPRequestHandler):
-
     def do_GET(self):
-
         self.send_response(200)
         self.end_headers()
-
-        self.wfile.write(
-            b"Telegram AI bot ishlayapti!"
-        )
+        self.wfile.write(b"Grand Mobile admin bot ishlayapti!")
 
     def log_message(self, format, *args):
         pass
 
 
 def start_web_server():
-
-    port = int(
-        os.environ.get("PORT", 10000)
-    )
-
-    server = HTTPServer(
-        ("0.0.0.0", port),
-        HealthHandler
-    )
-
-    server.serve_forever()
+    port = int(os.environ.get("PORT", 10000))
+    HTTPServer(("0.0.0.0", port), HealthHandler).serve_forever()
 
 
-# Render uchun web server
-threading.Thread(
-    target=start_web_server,
-    daemon=True
-).start()
+threading.Thread(target=start_web_server, daemon=True).start()
 
+app = Application.builder().token(TELEGRAM_TOKEN).build()
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("qoidalar", rules_command))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, chat))
 
-# ==================================================
-# TELEGRAM BOTNI ISHGA TUSHIRISH
-# ==================================================
-
-app = (
-    Application
-    .builder()
-    .token(TELEGRAM_TOKEN)
-    .build()
-)
-
-
-# /start
-app.add_handler(
-    CommandHandler(
-        "start",
-        start
-    )
-)
-
-
-# Oddiy xabarlar
-app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        chat
-    )
-)
-
-
-print("================================")
-print("BOT ISHLAYAPTI!")
-print("AI + INTERNET SEARCH")
-print("================================")
-
-
+print("GRAND MOBILE ADMIN BOT ISHLAYAPTI!")
 app.run_polling()
