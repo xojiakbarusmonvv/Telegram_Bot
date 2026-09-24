@@ -3,13 +3,19 @@ import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from telegram import Update
-from telegram.ext import Application, MessageHandler, ContextTypes, filters
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    MessageHandler,
+    ContextTypes,
+    filters,
+)
 from groq import Groq
 
 
-# ==============================
-# API KALITLAR
-# ==============================
+# ==================================================
+# API KALITLARI
+# ==================================================
 
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
 GROQ_API_KEY = os.environ["GROQ_API_KEY"]
@@ -17,31 +23,30 @@ GROQ_API_KEY = os.environ["GROQ_API_KEY"]
 client = Groq(api_key=GROQ_API_KEY)
 
 
-# ==============================
+# ==================================================
 # SUHBAT TARIXI
-# ==============================
+# ==================================================
 
 histories = {}
 
 
-# ==============================
+# ==================================================
 # AI XARAKTERI
-# ==============================
+# ==================================================
 
 SYSTEM_PROMPT = """
 Sen universal, aqlli va do'stona AI yordamchisan.
 
 Foydalanuvchi bilan asosan o'zbek tilida gaplash.
-Agar foydalanuvchi boshqa tilda yozsa, o'sha tilni tushun va
-kerak bo'lsa o'sha tilda javob ber.
+Agar foydalanuvchi boshqa tilda yozsa, o'sha tilda javob ber.
 
-O'zingni faqat oldindan sanab o'tilgan mavzular bilan cheklama.
 Foydalanuvchi qanday savol bersa, imkon qadar yordam ber.
+O'zingni faqat oldindan sanab o'tilgan mavzular bilan cheklama.
 
-SEN QUYIDAGI ISHLARNI QILA OLASAN:
+Sen quyidagilarda yordam bera olasan:
 
 - Oddiy suhbat
-- Savollarga javob berish
+- Savollarga javob
 - Matematika
 - Fizika
 - Kimyo
@@ -49,8 +54,7 @@ SEN QUYIDAGI ISHLARNI QILA OLASAN:
 - Tarix
 - Geografiya
 - Informatika
-- Maktab fanlari
-- Universitet mavzulari
+- Maktab va universitet fanlari
 - Uy vazifalarini tushuntirish
 - Ingliz tili
 - Xitoy tili
@@ -59,94 +63,84 @@ SEN QUYIDAGI ISHLARNI QILA OLASAN:
 - Arab tili
 - Boshqa tillar
 - Tarjima
-- So'zlarning ma'nosini tushuntirish
-- Talaffuzni tushuntirish
+- So'z ma'nosi
+- Talaffuz
+- Grammatika
 - Til o'rgatish
-- Insho yozish
-- Referat yozish
-- Maqola yozish
-- Hikoya yozish
-- She'r yozish
-- Ssenariy yozish
-- Email yozish
-- Telegram xabarlarini yozish
+- Insho
+- Referat
+- Maqola
+- Hikoya
+- She'r
+- Ssenariy
+- Email
+- Telegram xabarlari
 - Matnni tuzatish
 - Matnni qisqartirish
 - Matnni chiroyli qilish
 - Reja tuzish
 - G'oya berish
 - Biznes g'oyalari
-- Loyiha g'oyalari
 - Dasturlash
 - Python
 - JavaScript
 - HTML
 - CSS
-- Boshqa dasturlash tillari
-- Kod yozish
-- Kodni tushuntirish
-- Koddagi xatolarni topish
-- Telegram bot yaratish
+- Telegram bot
 - GitHub
 - Render
 - Kompyuter muammolari
 - Telefon muammolari
+- Internet muammolari
 - Texnologiya
 - AI
-- Sun'iy intellekt
-- Internet
-- Sayohat rejalari
-- Kundalik maslahatlar
+- Sayohat
 - Retseptlar
-- Sport haqida umumiy ma'lumot
+- Sport
 - Kitoblar
 - Filmlar
 - Musiqa
 - O'yinlar
 - Mantiqiy masalalar
-- Boshqotirmalar
-- Rejalashtirish
-- Fikrlarni tartibga solish
 - Va boshqa ko'plab mavzular.
-
-Agar foydalanuvchi "nima qila olasan?" deb so'rasa,
-faqat 4-5 ta mavzu bilan cheklanib qolma.
-Keng imkoniyatlaringni tushuntir.
-
-Javoblaring:
-- aqlli
-- tabiiy
-- aniq
-- tushunarli
-- foydali
-- do'stona
-bo'lsin.
-
-Oddiy savollarga qisqa javob ber.
-Murakkab savollarga esa bosqichma-bosqich tushuntirish ber.
 
 Agar foydalanuvchi biror narsani tushunmasa,
 juda sodda qilib qayta tushuntir.
 
-Agar texnik muammo bo'lsa,
-qadam-baqadam yo'l ko'rsat.
+Texnik muammolarda qadam-baqadam yo'l ko'rsat.
 
 Agar savol hozirgi yoki yangilanadigan ma'lumotni talab qilsa,
-internetdan qidirish imkoniyatidan foydalan.
+internet qidiruvidan foydalan.
 
-Internetdan topilmagan ma'lumotni o'ylab topib yozma.
+Internetdan topilmagan ma'lumotni o'ylab topma.
 Ishonching komil bo'lmasa, buni ayt.
 
-Foydalanuvchi oldingi xabarlarini davom ettirsa,
-suhbat tarixidan foydalan.
+Foydalanuvchining oldingi xabarlaridan foydalanib,
+suhbatni davom ettir.
 
-Foydalanuvchiga doimo hurmat bilan va samimiy gapir.
+Javoblaring tabiiy, aniq, foydali va do'stona bo'lsin.
+
+Oddiy savollarga qisqa javob ber.
+Murakkab savollarga bosqichma-bosqich javob ber.
 """
 
 
-# ==============================
-# TELEGRAM XABARLARINI QABUL QILISH
-# ==============================
+# ==================================================
+# /START BUYRUG'I
+# ==================================================
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    await update.message.reply_text(
+        "Salom! 👋\n\n"
+        "Men sizga turli mavzularda yordam bera oladigan AI botman.\n\n"
+        "Savolingizni yozing — boshlaymiz! 🤖"
+    )
+
+
+# ==================================================
+# TELEGRAM XABARLARI
+# ==================================================
 
 async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -162,12 +156,12 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not text:
         return
 
-    # Yangi foydalanuvchi
+    # Yangi foydalanuvchi uchun tarix
     if user_id not in histories:
         histories[user_id] = [
             {
                 "role": "system",
-                "content": SYSTEM_PROMPT
+                "content": SYSTEM_PROMPT,
             }
         ]
 
@@ -175,28 +169,40 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     histories[user_id].append(
         {
             "role": "user",
-            "content": text
+            "content": text,
         }
     )
 
-    # Oxirgi suhbatlarni AI ga yuborish
+    # Oxirgi suhbatlarni yuborish
     messages = histories[user_id][-21:]
 
     try:
 
         response = client.chat.completions.create(
             model="openai/gpt-oss-20b",
+
             messages=messages,
+
+            # Internet qidiruvi mavjud
             tools=[
                 {
                     "type": "browser_search"
                 }
             ],
-            tool_choice="required",
+
+            # MUHIM:
+            # required emas, auto bo'lishi kerak.
+            # AI kerak bo'lsa internetdan qidiradi.
+            # Oddiy savollarda esa qidirmaydi.
+            tool_choice="auto",
+
             reasoning_effort="low",
+
             temperature=1,
+
             max_completion_tokens=2048,
-            stream=False
+
+            stream=False,
         )
 
         answer = response.choices[0].message.content
@@ -208,15 +214,15 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         histories[user_id].append(
             {
                 "role": "assistant",
-                "content": answer
+                "content": answer,
             }
         )
 
-        # Telegram 4096 belgidan uzun xabarni qabul qilmaydi.
-        # Shuning uchun uzun javobni bo'lib yuboramiz.
+        # Telegram 4096 belgidan uzun xabarni qabul qilmaydi
         max_length = 4000
 
         for i in range(0, len(answer), max_length):
+
             await update.message.reply_text(
                 answer[i:i + max_length]
             )
@@ -231,13 +237,14 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-# ==============================
+# ==================================================
 # RENDER WEB SERVER
-# ==============================
+# ==================================================
 
 class HealthHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
+
         self.send_response(200)
         self.end_headers()
 
@@ -270,9 +277,9 @@ threading.Thread(
 ).start()
 
 
-# ==============================
+# ==================================================
 # TELEGRAM BOTNI ISHGA TUSHIRISH
-# ==============================
+# ==================================================
 
 app = (
     Application
@@ -282,6 +289,16 @@ app = (
 )
 
 
+# /start
+app.add_handler(
+    CommandHandler(
+        "start",
+        start
+    )
+)
+
+
+# Oddiy xabarlar
 app.add_handler(
     MessageHandler(
         filters.TEXT & ~filters.COMMAND,
