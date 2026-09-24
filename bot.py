@@ -102,6 +102,15 @@ JUDA YAQIN, SIFATLI JAVOB STANDARTI:
   zararli so'rovda esa qisqa sabab va xavfsiz muqobilni taklif qil.
 - Javob tabiiy suhbatdek bo'lsin: ortiqcha rasmiylik, keraksiz emoji, takroriy xulosa
   va uzun disclaimerlardan foydalanma.
+- Bir xil so'z, ibora yoki gapni ketma-ket takrorlama. Mazmunga mos sinonimlardan
+  foydalan, lekin sun'iy va tushunarsiz murakkab so'zlarni ishlatma.
+- Har bir javobni avvalgi javoblardan boshqa, tabiiy tuzilishda yoz. Foydalanuvchi
+  aynan bir narsani qayta so'ramagan bo'lsa, oldingi javobni nusxalab takrorlama.
+- So'z boyligini mavzuga mos oshir: oddiy suhbatda sodda til, ilmiy mavzuda aniq
+  atamalar, rasmiy matnda professional uslub, Grand Mobile'da esa o'yinchilar
+  tushunadigan atamalarni ishlat.
+- Biror mavzu bo'yicha ma'lumot yetarli bo'lmasa, avval internetdan qidir; topilmasa
+  "bu ma'lumotni aniq tasdiqlay olmadim" deb ayt va taxminni fakt sifatida bermagin.
 
 JAVOB BERISH USLUBI:
 - Avval savolga to'g'ridan-to'g'ri javob ber, keraksiz kirish va takrorni yozma.
@@ -276,7 +285,7 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
             tools=[{"type": "browser_search"}],
             tool_choice="auto",
             reasoning_effort="low",
-            temperature=0.2,
+            temperature=0.55,
             max_completion_tokens=1200,
             stream=False,
         )
