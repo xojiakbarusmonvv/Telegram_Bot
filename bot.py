@@ -1,228 +1,71 @@
-import asyncio
 import os
-import random
 import re
-import threading
-from http.server import BaseHTTPRequestHandler, HTTPServer
-
-from groq import Groq
 from telegram import Update
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    MessageHandler,
-    ContextTypes,
-    filters,
-)
+from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
+from groq import Groq
 
 
-# ==================================================
+# =========================
 # SOZLAMALAR
-# ==================================================
-TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
-GROQ_API_KEY = os.environ["GROQ_API_KEY"]
-MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
+# =========================
+
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+MODEL = "openai/gpt-oss-20b"
+
+if not TELEGRAM_TOKEN:
+    raise RuntimeError("TELEGRAM_TOKEN topilmadi!")
+
+if not GROQ_API_KEY:
+    raise RuntimeError("GROQ_API_KEY topilmadi!")
 
 client = Groq(api_key=GROQ_API_KEY)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-RULES_FILE = os.path.join(BASE_DIR, "grand_mobile_qoidalari.txt")
 
+# =========================
+# GRAND MOBILE QOIDALARINI YUKLASH
+# =========================
 
-# ==================================================
-# GRAND MOBILE QOIDALARINI O'QISH
-# ==================================================
-try:
-    with open(RULES_FILE, "r", encoding="utf-8") as file:
-        RULES_TEXT = file.read()
+RULES_FILE = "grand_mobile_qoidalari.txt"
+
+grand_mobile_rules = ""
+
+if os.path.exists(RULES_FILE):
+    with open(RULES_FILE, "r", encoding="utf-8") as f:
+        grand_mobile_rules = f.read()
 
     print(
         f"GRAND MOBILE QOIDALARI YUKLANDI: "
-        f"{len(RULES_TEXT)} ta belgi"
+        f"{len(grand_mobile_rules)} ta belgi"
     )
-
-except FileNotFoundError:
-    RULES_TEXT = ""
-    print(f"XATOLIK: {RULES_FILE} topilmadi")
+else:
+    print(f"OGOHLANTIRISH: {RULES_FILE} topilmadi")
 
 
-# ==================================================
-# XOTIRA
-# ==================================================
-histories = {}
-HISTORY_LIMIT = 10
+# =========================
+# SUHBAT TARIXI
+# =========================
+
+chat_histories = {}
+
+MAX_HISTORY = 12
 
 
-# ==================================================
-# QO'SHIMCHA FUNKSIYALAR
-# ==================================================
-FUN_FACTS = [
-    "Ahtapotning uchta yuragi bor.",
-    "Asalarilar raqs orqali bir-biriga oziq-ovqat joyini ko'rsatadi.",
-    "Bananning botanika bo'yicha rezavor meva hisoblanishini bilarmidingiz?",
-    "Yorug'lik Quyoshdan Yerga taxminan 8 daqiqada yetib keladi.",
-    "Inson miyasi uxlayotganda ham ma'lumotlarni qayta ishlaydi.",
-]
+# =========================
+# GRAND MOBILE EKANINI ANIQLASH
+# =========================
 
-JOKES = [
-    "Dasturchi choy ichgani bordi. Choy tugadi, lekin u hali ham 'loading...' holatida.",
-    "Kompyuter nega shifokorga bordi? Chunki virus yuqtirib olgan ekan.",
-    "Adminning eng sevimli gapi: 'Qoidani o'qib chiqing'.",
-]
-
-DAILY_TASKS = [
-    "Bugun yangi bir narsani o'rganing va uni do'stingizga tushuntiring.",
-    "10 daqiqa telefondan uzoqlashing va rejalaringizni yozib chiqing.",
-    "Bugun bir kishiga foydali yordam bering.",
-    "Grand Mobile'da qoidalarni buzmasdan eng yaxshi RP vaziyatni yarating.",
-]
-
-THIS_OR_THAT = [
-    "Choymi yoki kofe?",
-    "Telefonmi yoki kompyuter?",
-    "Grand Mobile'da boylikmi yoki kuchli RP?",
-    "Kinomi yoki serial?",
-]
-
-QUIZES = [
-    ("O'zbekiston poytaxti qaysi shahar?", "Toshkent"),
-    ("Grand Mobile'da DM nimani anglatadi?", "DeathMatch"),
-    ("Yerning tabiiy yo'ldoshi nima?", "Oy"),
-    ("Python'da matn chiqarish funksiyasi nima?", "print"),
-]
-
-
-# ==================================================
-# AI SYSTEM PROMPT
-# ==================================================
-SYSTEM_PROMPT = """
-Sen Grand Mobile admin qoidalari bo'yicha yordamchi botsan.
-
-ENG MUHIM QOIDA:
-Grand Mobile haqidagi savollarga JAVOB FAQAT foydalanuvchiga berilgan
-GRAND MOBILE QOIDALARI MATNIGA asoslanishi kerak.
-
-Qoidalardan tashqaridan ma'lumot qo'shma.
-Internetdan Grand Mobile qoidasi qidirmagin.
-O'z umumiy bilimingdan yangi jazo, yangi band yoki yangi qoida o'ylab topma.
-
-Agar kerakli ma'lumot qoidalar matnida bo'lmasa:
-"Bu holat yuborilgan qoidalar matnida aniq ko'rsatilmagan."
-deb ayt.
-
-Agar foydalanuvchi band raqamini so'rasa, aynan shu bandga asoslan.
-
-Agar vaziyatli savol bo'lsa:
-1. Eng mos bandni ko'rsat.
-2. Band raqamini yoz.
-3. Qoidani sodda tushuntir.
-4. Qoidada ko'rsatilgan jazoni yoz.
-5. Agar ma'lumot yetarli bo'lmasa, buni ayt.
-6. Yakuniy qarorni server ma'muriyati berishini eslatish mumkin.
-
-JAVOB USLUBI:
-- O'zbek tilida yoz.
-- Oddiy va tushunarli gapir.
-- Foydalanuvchi xato yozsa ham ma'nosini tushun.
-- Keraksiz uzun javob yozma.
-- Qoidada yo'q jazoni aytma.
-- Qoidada yo'q bandni o'ylab topma.
-- Bir nechta band mos kelsa, ularni ko'rsat.
-- Agar foydalanuvchi faqat "RP nima?" desa, qoidalar matnidagi RP ta'rifiga
-  asoslanib javob ber.
-- Agar qoidalar matnida faqat qisqa ta'rif bo'lsa, uni keraksiz umumiy
-  tushuntirish bilan almashtirma.
-
-Grand Mobile'ga aloqasi bo'lmagan oddiy savollarga odatiy yordamchi sifatida
-javob berishing mumkin.
-"""
-
-
-# ==================================================
-# MATNNI NORMALIZATSIYA
-# ==================================================
-def normalize(text: str) -> str:
-    text = text.lower()
-
-    replacements = {
-        "oʻ": "o'",
-        "o’": "o'",
-        "gʻ": "g'",
-        "g’": "g'",
-        "ё": "yo",
-        "қ": "q",
-        "ғ": "g'",
-        "ҳ": "h",
-        "ў": "o'",
-    }
-
-    for old, new in replacements.items():
-        text = text.replace(old, new)
-
-    return re.sub(r"[^a-z0-9'ʼ\s.-]", " ", text)
-
-
-# ==================================================
-# QOIDA BANDLARINI AJRATISH
-# ==================================================
-def rule_chunks(text: str):
-    """
-    1.1, 1.2, 4.1, 5.2.1 kabi bandlarni alohida ajratadi.
-    """
-
-    pattern = r"(?m)(?=^\s*\d+(?:\.\d+)+\s+)"
-
-    chunks = re.split(pattern, text)
-
-    result = []
-
-    for chunk in chunks:
-        chunk = chunk.strip()
-
-        if len(chunk) >= 20:
-            result.append(chunk)
-
-    return result
-
-
-RULE_CHUNKS = rule_chunks(RULES_TEXT)
-
-
-# ==================================================
-# ANIQ BANDNI TOPISH
-# ==================================================
-def find_exact_band(band: str):
-    """
-    Masalan:
-    4.1
-    5.2
-    1.1.1
-    """
-
-    pattern = (
-        rf"(?ms)"
-        rf"^\s*{re.escape(band)}\s+"
-        rf".*?"
-        rf"(?=^\s*\d+(?:\.\d+)+\s+|\Z)"
-    )
-
-    match = re.search(pattern, RULES_TEXT)
-
-    if match:
-        return match.group(0).strip()
-
-    return None
-
-
-# ==================================================
-# MUHIM TERMINLAR
-# ==================================================
-RULE_TERMS = [
+GRAND_MOBILE_KEYWORDS = [
+    "grand mobile",
+    "grandmobile",
+    "gm",
     "rp",
-    "ic",
     "ooc",
+    "ic",
     "mg",
     "nonrp",
+    "non-rp",
     "pg",
     "dm",
     "mass dm",
@@ -231,524 +74,404 @@ RULE_TERMS = [
     "mass sk",
     "rk",
     "tk",
-    "gz",
-    "rmt",
-    "report",
-    "mute",
-    "ban",
     "warn",
     "demorgan",
-    "bizwar",
-    "furgon",
-    "opg",
-    "family war",
+    "demorgan",
+    "mute",
+    "ban",
+    "gzs",
+    "gz",
+    "green zone",
+    "yashil zona",
+    "yashil zona",
     "lider",
-    "otgul",
-    "srok",
-    "fraksiya",
-    "biznes",
+    "leader",
+    "admin",
+    "adminka",
+    "tashkilot",
+    "fam",
+    "oila",
+    "server",
+    "serverda",
+    "sanksiya",
+    "jazo",
+    "qoidasi",
+    "qoidalar",
+    "band",
+    "4.1",
+    "4.2",
+    "4.3",
+    "4.4",
+    "4.5",
+    "4.6",
+    "4.7",
+    "4.8",
+    "5.1",
+    "5.2",
+    "5.3",
+    "5.4",
+    "5.5",
+    "5.6",
+    "5.7",
+    "5.8",
+    "5.9",
 ]
 
 
-# ==================================================
-# MOS QOIDALARNI TOPISH
-# ==================================================
-def find_relevant_rules(question: str, limit: int = 8) -> str:
-    if not RULES_TEXT.strip():
-        return "GRAND MOBILE QOIDALARI FAYLI TOPILMADI."
+def is_grand_mobile_question(text: str) -> bool:
+    text_lower = text.lower()
 
-    question_normalized = normalize(question)
+    for keyword in GRAND_MOBILE_KEYWORDS:
+        if keyword in text_lower:
+            return True
 
-    # ----------------------------------------------
-    # 1. BAND RAQAMI QIDIRISH
-    # ----------------------------------------------
-    requested_bands = re.findall(
-        r"\b(\d+(?:\.\d+)+)\b",
-        question_normalized,
-    )
+    return False
 
-    exact_results = []
 
-    for band in requested_bands:
-        found = find_exact_band(band)
+# =========================
+# QOIDADAN KERAKLI JOYNI TOPISH
+# =========================
 
-        if found:
-            exact_results.append(found)
+def find_relevant_rules(question: str, max_chars: int = 12000) -> str:
 
-    if exact_results:
-        return "\n\n".join(exact_results[:limit])
+    if not grand_mobile_rules:
+        return ""
 
-    # ----------------------------------------------
-    # 2. TERMINLARNI QIDIRISH
-    # ----------------------------------------------
-    search_words = set(
-        word
-        for word in question_normalized.split()
-        if len(word) >= 2
+    question_lower = question.lower()
+
+    # Agar aniq band raqami so'ralgan bo'lsa
+    numbers = re.findall(r"\b\d+\.\d+(?:\.\d+)?\b", question_lower)
+
+    if numbers:
+        selected = []
+
+        for number in numbers:
+            pattern = re.compile(
+                rf"(?im)^\s*{re.escape(number)}\b.*?(?=^\s*\d+\.\d+(?:\.\d+)?\b|\Z)",
+                re.S
+            )
+
+            matches = pattern.findall(grand_mobile_rules)
+
+            for match in matches:
+                selected.append(match.strip())
+
+        if selected:
+            result = "\n\n".join(selected)
+
+            if len(result) > max_chars:
+                result = result[:max_chars]
+
+            return result
+
+    # Muhim kalit so'zlar
+    words = re.findall(r"[a-zA-Zа-яА-ЯёЁ0-9]+", question_lower)
+
+    # Qoidalarni bo'laklarga ajratish
+    chunks = re.split(
+        r"(?=^\s*(?:\d+\.\d+(?:\.\d+)?|[IVXLC]+\.)\s*)",
+        grand_mobile_rules,
+        flags=re.MULTILINE
     )
 
     scored = []
 
-    for chunk in RULE_CHUNKS:
-        chunk_normalized = normalize(chunk)
+    for chunk in chunks:
+        chunk_lower = chunk.lower()
+
+        if not chunk.strip():
+            continue
 
         score = 0
 
-        # Oddiy so'z mosligi
-        for word in search_words:
-            if word in chunk_normalized.split():
-                score += 2
+        for word in words:
+            if len(word) < 2:
+                continue
 
-        # Maxsus terminlar
-        for term in RULE_TERMS:
-            if term in question_normalized and term in chunk_normalized:
-                score += 8
-
-        # To'liq iboralar
-        if "qaysi band" in question_normalized:
-            score += 1
+            if word in chunk_lower:
+                score += 1
 
         if score > 0:
-            scored.append((score, chunk))
+            scored.append((score, chunk.strip()))
 
-    scored.sort(
-        key=lambda item: item[0],
-        reverse=True,
-    )
+    scored.sort(key=lambda x: x[0], reverse=True)
 
-    selected = [
-        chunk
-        for _, chunk in scored[:limit]
-    ]
+    selected_chunks = []
 
-    if not selected:
-        return (
-            "Mos keladigan aniq qoida bandi topilmadi. "
-            "Savolni vaziyat bilan aniqroq yozing."
-        )
+    for score, chunk in scored[:8]:
+        selected_chunks.append(chunk)
 
-    return "\n\n".join(selected)
+    if selected_chunks:
+        result = "\n\n".join(selected_chunks)
 
+        if len(result) > max_chars:
+            result = result[:max_chars]
 
-# ==================================================
-# GRAND MOBILE SAVOLINI ANIQLASH
-# ==================================================
-def is_grand_mobile_question(text: str) -> bool:
-    normalized = normalize(text)
+        return result
 
-    keywords = [
-        "grand mobile",
-        "qoid",
-        "admin",
-        "demorgan",
-        "mute",
-        "ban",
-        "warn",
-        "rp",
-        "ic",
-        "ooc",
-        "mg",
-        "pg",
-        "dm",
-        "db",
-        "sk",
-        "rk",
-        "tk",
-        "gz",
-        "rmt",
-        "bizwar",
-        "furgon",
-        "opg",
-        "lider",
-        "fraksiya",
-        "report",
-        "srok",
-        "otgul",
-        "biznes",
-        "spawn",
-        "chit",
-        "script",
-        "autoclicker",
-        "macro",
-    ]
-
-    return any(
-        keyword in normalized
-        for keyword in keywords
-    )
+    # Hech narsa topilmasa, qoidalarning bosh qismini berish
+    return grand_mobile_rules[:max_chars]
 
 
-# ==================================================
-# START
-# ==================================================
+# =========================
+# SISTEMA PROMPT
+# =========================
+
+GENERAL_SYSTEM_PROMPT = """
+Sen universal aqlli Telegram yordamchisisan.
+
+Foydalanuvchi bilan tabiiy, tushunarli va foydali suhbat qil.
+
+Asosiy qoidalar:
+
+1. Savolga to'g'ridan-to'g'ri javob ber.
+2. Keraksiz uzun gaplar yozma.
+3. Foydalanuvchi qaysi tilda yozsa, odatda o'sha tilda javob ber.
+4. O'zbekcha savollarga sodda va tushunarli o'zbekcha javob ber.
+5. Ruscha savollarga ruscha javob ber.
+6. Inglizcha savollarga inglizcha javob ber.
+7. Matematika, tarix, geografiya, texnologiya, dasturlash, tarjima, kundalik savollar va boshqa mavzularda yordam ber.
+8. Agar aniq bilmasang, bilmasligingni ayt. Uydirma fakt yaratma.
+9. Foydalanuvchining oldingi xabarlaridan suhbat kontekstini hisobga ol.
+10. Javoblarni odamga o'xshab tabiiy yoz.
+11. Juda rasmiy yoki robotga o'xshash bo'lma.
+"""
+
+
+GRAND_MOBILE_SYSTEM_PROMPT = """
+Sen Grand Mobile bo'yicha yordamchi ham bo'la olasan.
+
+Agar foydalanuvchi Grand Mobile qoidalari haqida so'rasa,
+javobni berilgan GRAND MOBILE QOIDALARI asosida tayyorla.
+
+MUHIM:
+
+- Berilgan qoidalar asosiy manba hisoblanadi.
+- Qoidalarda yo'q narsani aniq qoida sifatida o'ylab topma.
+- Agar kerakli qoida berilgan ma'lumotlarda topilmasa,
+  "bu ma'lumot men olgan qoidalar ichida topilmadi" deb ayt.
+- Jazo turini o'zingcha o'zgartirma.
+- WARN, BAN, MUTE, DEMORGAN kabi jazolarni aynan qoidalarda ko'rsatilganidek yoz.
+- Agar band raqami mavjud bo'lsa, band raqamini ko'rsat.
+- Javobni foydalanuvchi tushunadigan sodda tilda yoz.
+- Foydalanuvchi faqat "RP nima?" kabi qisqa savol bersa,
+  keraksiz butun qoidalar kitobini chiqarma.
+- Faqat savolga tegishli qoidani tushuntir.
+"""
+
+
+# =========================
+# /START
+# =========================
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    user = update.effective_user
+
+    name = user.first_name if user else "do'stim"
+
     await update.message.reply_text(
-        "Salom! Men Grand Mobile qoidalari bo'yicha yordamchi botman.\n\n"
-        "Savolingizni yozing.\n"
-        "Masalan:\n"
-        "• RP nima?\n"
-        "• DM nima?\n"
-        "• GZda o'q uzsa qaysi band?\n"
-        "• 4.1 band nima?"
+        f"Salom, {name}! 👋\n\n"
+        "Men universal AI botman 🤖\n\n"
+        "Menga istalgan savolingni berishing mumkin:\n"
+        "• 🎮 Grand Mobile qoidalari\n"
+        "• 📚 O'qish\n"
+        "• 💻 Dasturlash\n"
+        "• 🌍 Tarjima\n"
+        "• 🧮 Matematika\n"
+        "• ❓ Oddiy savollar\n"
+        "• 💬 Oddiy suhbat\n\n"
+        "Savolingni yozaver!"
     )
 
 
-# ==================================================
-# QOIDALAR
-# ==================================================
-async def rules_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# =========================
+# /RESET
+# =========================
+
+async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    chat_id = update.effective_chat.id
+
+    chat_histories[chat_id] = []
+
     await update.message.reply_text(
-        "Grand Mobile qoidalari bo'yicha savolingizni yozing.\n\n"
-        "Masalan:\n"
-        "4.1 band nima?\n"
-        "DM uchun qanday jazo bor?\n"
-        "GZda o'ldirish mumkinmi?"
+        "🧹 Suhbat tarixi tozalandi."
     )
 
 
-# ==================================================
-# YORDAM
-# ==================================================
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Buyruqlar:\n"
-        "/start — botni boshlash\n"
-        "/qoidalar — Grand Mobile qoidalari\n"
-        "/yordam — yordam\n"
-        "/fakt — qiziqarli fakt\n"
-        "/hazil — hazil\n"
-        "/topshiriq — topshiriq\n"
-        "/tanlov — tanlov\n"
-        "/viktorina — viktorina\n\n"
-        "Oddiy savolingizni ham yozishingiz mumkin."
-    )
+# =========================
+# XABARGA JAVOB
+# =========================
 
-
-# ==================================================
-# FAKT
-# ==================================================
-async def fact_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Qiziqarli fakt: " + random.choice(FUN_FACTS)
-    )
-
-
-# ==================================================
-# HAZIL
-# ==================================================
-async def joke_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        random.choice(JOKES)
-    )
-
-
-# ==================================================
-# TOPSHIRIQ
-# ==================================================
-async def task_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Bugungi topshiriq: " + random.choice(DAILY_TASKS)
-    )
-
-
-# ==================================================
-# TANLOV
-# ==================================================
-async def choice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Tanlov: " + random.choice(THIS_OR_THAT)
-    )
-
-
-# ==================================================
-# VIKTORINA
-# ==================================================
-async def quiz_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    question, answer = random.choice(QUIZES)
-
-    context.user_data["quiz_answer"] = answer.lower()
-
-    await update.message.reply_text(
-        "Mini-viktorina:\n\n"
-        + question
-        + "\n\nJavobingizni yozing."
-    )
-
-
-# ==================================================
-# CHAT
-# ==================================================
-async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_message(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
 
     if not update.message:
         return
 
-    if not update.message.text:
+    user_text = update.message.text
+
+    if not user_text:
         return
 
-    user_id = update.effective_user.id
-    text = update.message.text.strip()
+    chat_id = update.effective_chat.id
 
-    if not text:
-        return
+    # Tarix mavjud bo'lmasa yaratamiz
+    if chat_id not in chat_histories:
+        chat_histories[chat_id] = []
 
-    # ----------------------------------------------
-    # VIKTORINA JAVOBI
-    # ----------------------------------------------
-    quiz_answer = context.user_data.pop(
-        "quiz_answer",
-        None,
-    )
+    # =========================
+    # GRAND MOBILE TEKSHIRUVI
+    # =========================
 
-    if quiz_answer:
-        if quiz_answer in text.lower():
-            await update.message.reply_text(
-                "To'g'ri javob! Barakalla."
-            )
-        else:
-            await update.message.reply_text(
-                f"Bu safar xato. To'g'ri javob: {quiz_answer}"
-            )
+    grand_question = is_grand_mobile_question(user_text)
 
-        return
+    if grand_question:
 
-    # ----------------------------------------------
-    # GRAND MOBILE SAVOLI
-    # ----------------------------------------------
-    grand_mobile = is_grand_mobile_question(text)
+        relevant_rules = find_relevant_rules(user_text)
 
-    # ----------------------------------------------
-    # QOIDALARNI TOPISH
-    # ----------------------------------------------
-    relevant = find_relevant_rules(text)
-
-    # ----------------------------------------------
-    # TARIX
-    # ----------------------------------------------
-    if user_id not in histories:
-        histories[user_id] = [
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT,
-            }
-        ]
-
-    histories[user_id].append(
-        {
-            "role": "user",
-            "content": text,
-        }
-    )
-
-    histories[user_id] = (
-        [histories[user_id][0]]
-        + histories[user_id][1:][-HISTORY_LIMIT:]
-    )
-
-    # ----------------------------------------------
-    # GRAND MOBILE UCHUN QAT'IY PROMPT
-    # ----------------------------------------------
-    if grand_mobile:
-
-        messages = [
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT,
-            },
-            {
-                "role": "system",
-                "content": (
-                    "MUHIM: Quyidagi matn Grand Mobile qoidalarining "
-                    "shu savolga tegishli qismidir.\n\n"
-                    "FAQAT SHU MATNGA ASOSLAN.\n"
-                    "Matnda yo'q ma'lumotni qo'shma.\n"
-                    "Matnda yo'q jazo yoki bandni o'ylab topma.\n\n"
-                    "QOIDALAR:\n"
-                    + relevant
-                ),
-            },
-        ]
-
-        # Grand Mobile savolida faqat so'nggi suhbat kontekstini qo'shamiz.
-        messages += histories[user_id][1:][-6:]
+        system_prompt = (
+            GENERAL_SYSTEM_PROMPT
+            + "\n\n"
+            + GRAND_MOBILE_SYSTEM_PROMPT
+            + "\n\n"
+            + "GRAND MOBILE QOIDALARIDAN TOPILGAN MA'LUMOT:\n"
+            + relevant_rules
+        )
 
     else:
 
-        # Oddiy savol
-        messages = [
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT,
-            }
-        ]
+        system_prompt = GENERAL_SYSTEM_PROMPT
 
-        messages += histories[user_id][1:]
+    # =========================
+    # CHAT TARIXI
+    # =========================
+
+    messages = [
+        {
+            "role": "system",
+            "content": system_prompt
+        }
+    ]
+
+    # Oldingi suhbat
+    messages.extend(chat_histories[chat_id][-MAX_HISTORY:])
+
+    # Hozirgi savol
+    messages.append(
+        {
+            "role": "user",
+            "content": user_text
+        }
+    )
+
+    # =========================
+    # GROQ
+    # =========================
 
     try:
 
-        response = await asyncio.to_thread(
-            client.chat.completions.create,
+        response = client.chat.completions.create(
             model=MODEL,
             messages=messages,
-            tool_choice="none",
-            reasoning_effort="low",
-            temperature=0.2,
-            max_completion_tokens=800,
-            stream=False,
+            temperature=0.4,
+            max_tokens=1200
         )
 
-        answer = (
-            response.choices[0].message.content
-            or "Kechirasiz, javob tayyor bo'lmadi."
-        )
+        answer = response.choices[0].message.content
 
-        histories[user_id].append(
+        if not answer:
+            answer = "Kechirasiz, hozir javob bera olmadim."
+
+        # =========================
+        # TARIXGA SAQLASH
+        # =========================
+
+        chat_histories[chat_id].append(
             {
-                "role": "assistant",
-                "content": answer,
+                "role": "user",
+                "content": user_text
             }
         )
 
-        # Telegram 4096 belgidan oshgan xabarni qabul qilmaydi.
-        for i in range(0, len(answer), 4000):
-            await update.message.reply_text(
-                answer[i:i + 4000]
+        chat_histories[chat_id].append(
+            {
+                "role": "assistant",
+                "content": answer
+            }
+        )
+
+        # Juda kattalashib ketmasligi uchun
+        if len(chat_histories[chat_id]) > MAX_HISTORY * 2:
+            chat_histories[chat_id] = (
+                chat_histories[chat_id][-MAX_HISTORY * 2:]
             )
 
-    except Exception as error:
+        # Telegram 4096 belgidan katta xabarni bo'ladi
+        if len(answer) <= 4000:
 
-        print(
-            "XATOLIK:",
-            repr(error),
-        )
+            await update.message.reply_text(answer)
+
+        else:
+
+            for i in range(0, len(answer), 4000):
+                await update.message.reply_text(
+                    answer[i:i + 4000]
+                )
+
+    except Exception as e:
+
+        print("XATOLIK:", repr(e))
 
         await update.message.reply_text(
-            "Javob berishda texnik xatolik yuz berdi. "
-            "Keyinroq yana urinib ko'ring."
+            "⚠️ Hozir javob berishda xatolik yuz berdi. "
+            "Birozdan keyin yana urinib ko'r."
         )
 
 
-# ==================================================
-# RENDER HEALTH CHECK
-# ==================================================
-class HealthHandler(BaseHTTPRequestHandler):
+# =========================
+# BOTNI ISHGA TUSHIRISH
+# =========================
 
-    def do_GET(self):
+def main():
 
-        self.send_response(200)
-        self.end_headers()
+    print("UNIVERSAL AI BOT ISHGA TUSHYAPTI...")
 
-        self.wfile.write(
-            b"Grand Mobile admin bot ishlayapti!"
+    if grand_mobile_rules:
+        print("Grand Mobile qoidalari tayyor.")
+    else:
+        print("Grand Mobile qoidalari fayli topilmadi.")
+
+    app = (
+        Application.builder()
+        .token(TELEGRAM_TOKEN)
+        .build()
+    )
+
+    app.add_handler(
+        CommandHandler("start", start)
+    )
+
+    app.add_handler(
+        CommandHandler("reset", reset)
+    )
+
+    app.add_handler(
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            handle_message
         )
-
-    def log_message(self, format, *args):
-        pass
-
-
-def start_web_server():
-
-    port = int(
-        os.environ.get(
-            "PORT",
-            10000,
-        )
     )
 
-    HTTPServer(
-        ("0.0.0.0", port),
-        HealthHandler,
-    ).serve_forever()
+    print("UNIVERSAL AI BOT ISHLAYAPTI!")
 
-
-# ==================================================
-# WEB SERVER
-# ==================================================
-threading.Thread(
-    target=start_web_server,
-    daemon=True,
-).start()
-
-
-# ==================================================
-# TELEGRAM BOT
-# ==================================================
-app = (
-    Application
-    .builder()
-    .token(TELEGRAM_TOKEN)
-    .build()
-)
-
-app.add_handler(
-    CommandHandler(
-        "start",
-        start,
+    app.run_polling(
+        drop_pending_updates=True
     )
-)
-
-app.add_handler(
-    CommandHandler(
-        "qoidalar",
-        rules_command,
-    )
-)
-
-app.add_handler(
-    CommandHandler(
-        "yordam",
-        help_command,
-    )
-)
-
-app.add_handler(
-    CommandHandler(
-        "fakt",
-        fact_command,
-    )
-)
-
-app.add_handler(
-    CommandHandler(
-        "hazil",
-        joke_command,
-    )
-)
-
-app.add_handler(
-    CommandHandler(
-        "topshiriq",
-        task_command,
-    )
-)
-
-app.add_handler(
-    CommandHandler(
-        "tanlov",
-        choice_command,
-    )
-)
-
-app.add_handler(
-    CommandHandler(
-        "viktorina",
-        quiz_command,
-    )
-)
-
-app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        chat,
-    )
-)
 
 
-# ==================================================
-# START
-# ==================================================
-print("GRAND MOBILE ADMIN BOT ISHLAYAPTI!")
-
-app.run_polling(
-    drop_pending_updates=True
-)
+if __name__ == "__main__":
+    main()
