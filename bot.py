@@ -1,7 +1,9 @@
 import os
 import re
 import io
+import threading
 
+from flask import Flask
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -10,7 +12,6 @@ from telegram.ext import (
     ContextTypes,
     filters,
 )
-
 from groq import Groq
 from PIL import Image, ImageDraw, ImageFont
 
@@ -34,6 +35,26 @@ client = Groq(api_key=GROQ_API_KEY)
 
 
 # =========================================================
+# RENDER PORT
+# =========================================================
+
+web_app = Flask(__name__)
+
+
+@web_app.route("/")
+def home():
+    return "Telegram bot ishlayapti!"
+
+
+def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    web_app.run(host="0.0.0.0", port=port)
+
+
+threading.Thread(target=run_web, daemon=True).start()
+
+
+# =========================================================
 # GRAND MOBILE QOIDALARI
 # =========================================================
 
@@ -41,7 +62,7 @@ RULES_FILE = "grand_mobile_qoidalari.txt"
 
 grand_mobile_rules = ""
 
-if os.path.exists(RULES_FILE):
+try:
     with open(RULES_FILE, "r", encoding="utf-8") as f:
         grand_mobile_rules = f.read()
 
@@ -49,47 +70,38 @@ if os.path.exists(RULES_FILE):
         f"GRAND MOBILE QOIDALARI YUKLANDI: "
         f"{len(grand_mobile_rules)} ta belgi"
     )
-else:
-    print("OGOHLANTIRISH: grand_mobile_qoidalari.txt topilmadi")
+
+except Exception as e:
+    print("QOIDALAR FAYLI XATOSI:", e)
+    grand_mobile_rules = ""
 
 
 # =========================================================
-# CHAT TARIXI
+# XOTIRA
 # =========================================================
 
 chat_histories = {}
 
-MAX_HISTORY = 12
-
-
-# =========================================================
-# RASM SAQLASH
-# =========================================================
-
+# Har bir foydalanuvchining oxirgi rasmi
 user_images = {}
 
 
 # =========================================================
-# GRAND MOBILE KALIT SO'ZLARI
+# GRAND MOBILE ANIQLASH
 # =========================================================
 
 GRAND_MOBILE_KEYWORDS = [
     "grand mobile",
     "grandmobile",
     "rp",
-    "ooc",
-    "ic",
     "mg",
-    "nonrp",
-    "non-rp",
-    "pg",
     "dm",
-    "mass dm",
+    "pg",
     "db",
     "sk",
-    "mass sk",
     "rk",
     "tk",
+    "nonrp",
     "warn",
     "demorgan",
     "mute",
@@ -97,40 +109,20 @@ GRAND_MOBILE_KEYWORDS = [
     "gz",
     "green zone",
     "yashil zona",
-    "lider",
-    "leader",
+    "qoid",
+    "qoida",
     "admin",
-    "adminka",
-    "tashkilot",
-    "fam",
-    "oila",
-    "server",
-    "sanksiya",
-    "jazo",
-    "qoidasi",
-    "qoidalar",
-    "band",
-    "4.1",
-    "4.2",
-    "4.3",
-    "4.4",
-    "4.5",
-    "4.6",
-    "4.7",
-    "4.8",
-    "5.1",
-    "5.2",
-    "5.3",
-    "5.4",
-    "5.5",
-    "5.6",
-    "5.7",
-    "5.8",
-    "5.9",
+    "arz",
+    "shikoyat",
+    "complaint",
+    "o'ldirish",
+    "öldirish",
+    "otish",
+    "tarang",
 ]
 
 
-def is_grand_mobile_question(text: str) -> bool:
+def is_grand_mobile_question(text):
     text_lower = text.lower()
 
     for keyword in GRAND_MOBILE_KEYWORDS:
@@ -141,139 +133,105 @@ def is_grand_mobile_question(text: str) -> bool:
 
 
 # =========================================================
-# QOIDALARDAN KERAKLI QISMNI TOPISH
+# RELEVANT QOIDANI TOPISH
 # =========================================================
 
-def find_relevant_rules(question: str, max_chars: int = 12000) -> str:
-
+def find_relevant_rules(question, max_chars=14000):
     if not grand_mobile_rules:
         return ""
 
-    question_lower = question.lower()
-
-    # Aniq band raqami
-    numbers = re.findall(
-        r"\b\d+\.\d+(?:\.\d+)?\b",
-        question_lower
-    )
-
-    if numbers:
-
-        selected = []
-
-        for number in numbers:
-
-            pattern = re.compile(
-                rf"(?im)^\s*{re.escape(number)}\b.*?"
-                rf"(?=^\s*\d+\.\d+(?:\.\d+)?\b|\Z)",
-                re.S
-            )
-
-            matches = pattern.findall(grand_mobile_rules)
-
-            for match in matches:
-                selected.append(match.strip())
-
-        if selected:
-
-            result = "\n\n".join(selected)
-
-            return result[:max_chars]
-
-    # So'zlar bo'yicha qidirish
     words = re.findall(
-        r"[a-zA-Zа-яА-ЯёЁ0-9]+",
-        question_lower
+        r"[a-zA-Zа-яА-ЯёЁ0-9']+",
+        question.lower()
     )
 
-    chunks = re.split(
-        r"(?=^\s*(?:\d+\.\d+(?:\.\d+)?|[IVXLC]+\.)\s*)",
-        grand_mobile_rules,
-        flags=re.MULTILINE
-    )
+    lines = grand_mobile_rules.splitlines()
 
     scored = []
 
-    for chunk in chunks:
-
-        chunk_lower = chunk.lower()
-
-        if not chunk.strip():
-            continue
+    for line in lines:
+        line_lower = line.lower()
 
         score = 0
 
         for word in words:
-
-            if len(word) < 2:
-                continue
-
-            if word in chunk_lower:
+            if len(word) >= 2 and word in line_lower:
                 score += 1
 
         if score > 0:
-            scored.append(
-                (score, chunk.strip())
-            )
+            scored.append((score, line))
 
     scored.sort(
         key=lambda x: x[0],
         reverse=True
     )
 
-    selected_chunks = []
+    selected = []
 
-    for score, chunk in scored[:8]:
-        selected_chunks.append(chunk)
+    total = 0
 
-    if selected_chunks:
+    for score, line in scored:
+        if total + len(line) > max_chars:
+            break
 
-        result = "\n\n".join(selected_chunks)
+        selected.append(line)
+        total += len(line) + 1
 
-        return result[:max_chars]
+    if selected:
+        return "\n".join(selected)
 
+    # Agar mos qator topilmasa, qoidalarning boshidan beramiz
     return grand_mobile_rules[:max_chars]
 
 
 # =========================================================
-# SISTEMA PROMPT
+# SYSTEM PROMPT
 # =========================================================
 
 GENERAL_SYSTEM_PROMPT = """
-Sen universal aqlli Telegram yordamchisisan.
+Sen Telegramdagi universal AI yordamchisan.
 
-Foydalanuvchi bilan tabiiy, tushunarli va foydali suhbat qil.
+Foydalanuvchi qaysi tilda yozsa, shu tilda javob ber.
 
-Qoidalar:
+Asosiy qoidalar:
 
-1. Savolga to'g'ridan-to'g'ri javob ber.
-2. Keraksiz uzun gaplar yozma.
-3. Foydalanuvchi qaysi tilda yozsa, o'sha tilda javob ber.
-4. O'zbekcha savollarga sodda o'zbekcha javob ber.
-5. Ruscha savollarga ruscha javob ber.
-6. Inglizcha savollarga inglizcha javob ber.
-7. Matematika, tarix, texnologiya, dasturlash, tarjima,
-   kundalik savollar va boshqa mavzularda yordam ber.
-8. Bilmagan narsangni uydirma.
-9. Oldingi suhbat kontekstini hisobga ol.
-10. Tabiiy va odamga o'xshab javob ber.
+1. O'zbekcha savolga o'zbekcha javob ber.
+2. Ruscha savolga ruscha javob ber.
+3. Inglizcha savolga inglizcha javob ber.
+4. Oddiy suhbat qila ol.
+5. Matematika masalalarini yech.
+6. Tarjima qil.
+7. Tarix, geografiya, texnologiya, dasturlash va boshqa mavzularda yordam ber.
+8. Javoblarni tushunarli va amaliy qil.
+9. Agar aniq bilmasang, uydirma ma'lumot bermagin.
+10. Foydalanuvchi qisqa savol bersa, keraksiz uzun javob bermagin.
 """
 
 
 GRAND_MOBILE_SYSTEM_PROMPT = """
-Agar foydalanuvchi Grand Mobile haqida so'rasa,
-berilgan GRAND MOBILE QOIDALARI asosida javob ber.
+Sen Grand Mobile server qoidalari bo'yicha yordamchisan.
 
-MUHIM:
+Foydalanuvchi savoliga faqat berilgan Grand Mobile qoidalariga
+asoslanib javob ber.
 
-- Berilgan qoidalar asosiy manba.
-- Qoidalarda yo'q narsani o'ylab topma.
-- Jazo turini o'zgartirma.
-- WARN, BAN, MUTE, DEMORGAN kabi jazolarni
-  qoidada ko'rsatilganidek yoz.
-- Agar band raqami bo'lsa, bandni ko'rsat.
-- Javobni sodda tushuntir.
-- Faqat kerakli qoidani ko'rsat.
+Javobda quyidagilarni aniq ko'rsatishga harakat qil:
+
+- Qaysi qoida buzilgan
+- Qoida raqami, agar mavjud bo'lsa
+- Jazosi
+- Qisqa tushuntirish
+
+Agar qoidalarda aniq javob bo'lmasa:
+
+"Bu holat berilgan qoidalar faylida aniq ko'rsatilmagan."
+
+deb ayt.
+
+Qoidani o'zingcha o'ylab topma.
+
+Agar foydalanuvchi RP, MG, DM, PG, DB, SK, RK, TK,
+NonRP kabi terminlardan foydalansa, ularning qoidalar faylidagi
+ma'nosidan foydalan.
 """
 
 
@@ -281,137 +239,82 @@ MUHIM:
 # START
 # =========================================================
 
-async def start(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    user = update.effective_user
+    text = """
+🤖 Salom!
 
-    name = (
-        user.first_name
-        if user
-        else "do'stim"
-    )
+Men Universal AI Telegram botman.
 
-    await update.message.reply_text(
-        f"Salom, {name}! 👋\n\n"
-        "Men universal AI botman 🤖\n\n"
-        "Men quyidagilarda yordam bera olaman:\n\n"
-        "🎮 Grand Mobile qoidalari\n"
-        "🤖 Oddiy AI savollar\n"
-        "📚 O'qish\n"
-        "💻 Dasturlash\n"
-        "🌍 Tarjima\n"
-        "🧮 Matematika\n"
-        "📸 Oddiy rasm tahrirlash\n\n"
-        "Savolingni yoki rasmingni yuboraver!"
-    )
+Men bilan:
+
+💬 Oddiy suhbat
+🧠 AI savollar
+📚 Grand Mobile qoidalari
+➗ Matematika
+🌍 Tarjima
+💻 Dasturlash
+📖 Umumiy bilim
+🖼 Rasmga matn qo‘shish
+
+kabi ishlarni qilishing mumkin.
+
+Grand Mobile bo‘yicha:
+👉 RP nima?
+👉 DM jazosi qancha?
+👉 GZ qoidasi qanday?
+
+deb so‘rashing mumkin.
+
+Rasm yuborsang, unga nima yozish kerakligini ayt.
+Masalan:
+
+"pastiga Xojiakbar deb yoz"
+"o'rtasiga Salom deb yoz"
+"ustiga TEST deb yoz"
+"""
+
+    await update.message.reply_text(text)
 
 
 # =========================================================
 # RESET
 # =========================================================
 
-async def reset(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
+async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    chat_id = update.effective_chat.id
+    user_id = update.effective_user.id
 
-    chat_histories[chat_id] = []
+    chat_histories[user_id] = []
 
     await update.message.reply_text(
-        "🧹 Suhbat tarixi tozalandi."
+        "🧹 Suhbat xotirasi tozalandi."
     )
 
 
 # =========================================================
-# RASM QABUL QILISH
+# FONT
 # =========================================================
 
-async def handle_photo(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
+def get_font(size=50):
 
-    if not update.message:
-        return
-
-    photo = update.message.photo
-
-    if not photo:
-        return
-
-    chat_id = update.effective_chat.id
-
-    try:
-
-        # Eng katta o'lchamdagi rasm
-        file = await photo[-1].get_file()
-
-        image_bytes = await file.download_as_bytearray()
-
-        user_images[chat_id] = bytes(image_bytes)
-
-        await update.message.reply_text(
-            "📸 Rasmni oldim!\n\n"
-            "Endi nima qilishimni yoz.\n\n"
-            "Masalan:\n"
-            "• Rasmga Xojiakbar deb yoz\n"
-            "• Pastiga Xumo_Xusniddinov deb yoz\n"
-            "• O'rtasiga TEST deb yoz\n\n"
-            "⚠️ Hozircha bepul tahrirlashda "
-            "asosan yozuv qo'shish funksiyasi ishlaydi."
-        )
-
-    except Exception as e:
-
-        print(
-            "RASM QABUL QILISH XATOSI:",
-            repr(e)
-        )
-
-        await update.message.reply_text(
-            "❌ Rasmni olishda xatolik bo'ldi."
-        )
-
-
-# =========================================================
-# FONT TOPISH
-# =========================================================
-
-def get_font(size: int):
-
-    possible_fonts = [
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf",
+    font_paths = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf",
     ]
 
-    for font_path in possible_fonts:
-
-        if os.path.exists(font_path):
-
-            try:
-                return ImageFont.truetype(
-                    font_path,
-                    size
-                )
-            except:
-                pass
+    for path in font_paths:
+        if os.path.exists(path):
+            return ImageFont.truetype(path, size)
 
     return ImageFont.load_default()
 
 
 # =========================================================
-# RASMGA YOZUV QO'SHISH
+# RASMGA MATN YOZISH
 # =========================================================
 
-def add_text_to_image(
-    image_bytes: bytes,
-    text: str
-):
+def add_text_to_image(image_bytes, text, position="bottom"):
 
     image = Image.open(
         io.BytesIO(image_bytes)
@@ -419,17 +322,17 @@ def add_text_to_image(
 
     draw = ImageDraw.Draw(image)
 
-    width, height = image.size
+    # Matn juda uzun bo'lsa kichraytiramiz
+    font_size = 60
 
-    # Rasmga mos font
-    font_size = max(
-        20,
-        min(width, height) // 15
-    )
+    if len(text) > 25:
+        font_size = 45
+
+    if len(text) > 40:
+        font_size = 35
 
     font = get_font(font_size)
 
-    # Matn o'lchami
     bbox = draw.textbbox(
         (0, 0),
         text,
@@ -440,9 +343,18 @@ def add_text_to_image(
     text_width = bbox[2] - bbox[0]
     text_height = bbox[3] - bbox[1]
 
-    # Pastki markaz
-    x = (width - text_width) // 2
-    y = height - text_height - 40
+    image_width, image_height = image.size
+
+    x = (image_width - text_width) // 2
+
+    if position == "top":
+        y = 30
+
+    elif position == "middle":
+        y = (image_height - text_height) // 2
+
+    else:
+        y = image_height - text_height - 40
 
     # Qora kontur + oq yozuv
     draw.text(
@@ -450,7 +362,7 @@ def add_text_to_image(
         text,
         font=font,
         fill="white",
-        stroke_width=3,
+        stroke_width=4,
         stroke_fill="black"
     )
 
@@ -468,41 +380,117 @@ def add_text_to_image(
 
 
 # =========================================================
-# RASM TAHRIRLASH BUYRUG'INI ANIQLASH
+# RASM BUYRUG'INI ANIQLASH
 # =========================================================
 
-def extract_image_text(command: str):
+def extract_image_text(command):
 
-    text = command.strip()
+    command = command.strip()
 
     patterns = [
-        r"r\w*\s+ga\s+(.+?)\s+(?:deb\s+)?yoz",
-        r"pastiga\s+(.+?)\s+(?:deb\s+)?yoz",
-        r"o['’`]?rtasiga\s+(.+?)\s+(?:deb\s+)?yoz",
-        r"ustiga\s+(.+?)\s+(?:deb\s+)?yoz",
-        r"(.+?)\s+deb\s+yoz",
+
+        (
+            r"pastiga\s+(.+?)\s+deb\s+yoz$",
+            "bottom"
+        ),
+
+        (
+            r"pastiga\s+(.+?)\s+yoz$",
+            "bottom"
+        ),
+
+        (
+            r"tagiga\s+(.+?)\s+deb\s+yoz$",
+            "bottom"
+        ),
+
+        (
+            r"tagiga\s+(.+?)\s+yoz$",
+            "bottom"
+        ),
+
+        (
+            r"o['’`]?rtasiga\s+(.+?)\s+deb\s+yoz$",
+            "middle"
+        ),
+
+        (
+            r"o['’`]?rtasiga\s+(.+?)\s+yoz$",
+            "middle"
+        ),
+
+        (
+            r"markaziga\s+(.+?)\s+deb\s+yoz$",
+            "middle"
+        ),
+
+        (
+            r"ustiga\s+(.+?)\s+deb\s+yoz$",
+            "top"
+        ),
+
+        (
+            r"ustiga\s+(.+?)\s+yoz$",
+            "top"
+        ),
+
+        (
+            r"(.+?)\s+deb\s+yoz$",
+            "bottom"
+        ),
     ]
 
-    for pattern in patterns:
+    for pattern, position in patterns:
 
         match = re.search(
             pattern,
-            text,
-            flags=re.IGNORECASE
+            command,
+            re.IGNORECASE
         )
 
         if match:
 
-            result = match.group(1).strip()
+            text = match.group(1).strip()
 
-            if result:
-                return result
+            if text:
+                return text, position
 
-    return None
+    return None, None
 
 
 # =========================================================
-# MATNLI XABAR
+# RASM QABUL QILISH
+# =========================================================
+
+async def handle_photo(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
+
+    user_id = update.effective_user.id
+
+    photo = update.message.photo[-1]
+
+    telegram_file = await context.bot.get_file(
+        photo.file_id
+    )
+
+    image_bytes = await telegram_file.download_as_bytearray()
+
+    user_images[user_id] = bytes(image_bytes)
+
+    await update.message.reply_text(
+        "🖼 Rasm qabul qilindi.\n\n"
+        "Endi rasmga nima qilishni yoz.\n\n"
+        "Masalan:\n"
+        "👉 pastiga Xojiakbar deb yoz\n"
+        "👉 o'rtasiga SALOM deb yoz\n"
+        "👉 ustiga TEST deb yoz"
+    )
+
+
+# =========================================================
+# MATN XABAR
 # =========================================================
 
 async def handle_message(
@@ -510,89 +498,69 @@ async def handle_message(
     context: ContextTypes.DEFAULT_TYPE
 ):
 
-    if not update.message:
+    if not update.message or not update.message.text:
         return
 
-    user_text = update.message.text
+    user_id = update.effective_user.id
+    text = update.message.text.strip()
 
-    if not user_text:
-        return
+    # -----------------------------------------------------
+    # RASM BUYRUG'I
+    # -----------------------------------------------------
 
-    chat_id = update.effective_chat.id
+    if user_id in user_images:
 
-    # =====================================================
-    # AGAR OLDIN RASM YUBORILGAN BO'LSA
-    # =====================================================
-
-    if chat_id in user_images:
-
-        image_text = extract_image_text(
-            user_text
-        )
+        image_text, position = extract_image_text(text)
 
         if image_text:
 
             try:
 
-                result_image = add_text_to_image(
-                    user_images[chat_id],
-                    image_text
+                result = add_text_to_image(
+                    user_images[user_id],
+                    image_text,
+                    position
                 )
 
                 await update.message.reply_photo(
-                    photo=result_image,
-                    caption=(
-                        f"✅ Tayyor!\n"
-                        f"Qo'shilgan yozuv: {image_text}"
-                    )
+                    photo=result,
+                    caption="✅ Tayyor!"
                 )
 
-                # Rasmni o'chirib qo'yamiz
-                del user_images[chat_id]
+                del user_images[user_id]
 
                 return
 
             except Exception as e:
 
-                print(
-                    "RASM TAHRIR XATOSI:",
-                    repr(e)
-                )
+                print("RASM XATOSI:", e)
 
                 await update.message.reply_text(
-                    "❌ Rasmni tahrirlashda xatolik bo'ldi."
+                    "❌ Rasmni o'zgartirishda xatolik bo'ldi."
                 )
 
                 return
 
-    # =====================================================
+    # -----------------------------------------------------
     # CHAT TARIXI
-    # =====================================================
+    # -----------------------------------------------------
 
-    if chat_id not in chat_histories:
+    if user_id not in chat_histories:
+        chat_histories[user_id] = []
 
-        chat_histories[chat_id] = []
+    history = chat_histories[user_id]
 
-    # =====================================================
+    # -----------------------------------------------------
     # GRAND MOBILE
-    # =====================================================
+    # -----------------------------------------------------
 
-    grand_question = is_grand_mobile_question(
-        user_text
-    )
+    if is_grand_mobile_question(text):
 
-    if grand_question:
-
-        relevant_rules = find_relevant_rules(
-            user_text
-        )
+        relevant_rules = find_relevant_rules(text)
 
         system_prompt = (
-            GENERAL_SYSTEM_PROMPT
-            + "\n\n"
-            + GRAND_MOBILE_SYSTEM_PROMPT
-            + "\n\n"
-            + "GRAND MOBILE QOIDALARIDAN MA'LUMOT:\n"
+            GRAND_MOBILE_SYSTEM_PROMPT
+            + "\n\nGRAND MOBILE QOIDALARI:\n"
             + relevant_rules
         )
 
@@ -600,9 +568,15 @@ async def handle_message(
 
         system_prompt = GENERAL_SYSTEM_PROMPT
 
-    # =====================================================
-    # GROQ MESSAGES
-    # =====================================================
+    history.append(
+        {
+            "role": "user",
+            "content": text
+        }
+    )
+
+    # Oxirgi 10 ta xabarni saqlaymiz
+    history = history[-10:]
 
     messages = [
         {
@@ -611,20 +585,11 @@ async def handle_message(
         }
     ]
 
-    messages.extend(
-        chat_histories[chat_id][-MAX_HISTORY:]
-    )
+    messages.extend(history)
 
-    messages.append(
-        {
-            "role": "user",
-            "content": user_text
-        }
-    )
-
-    # =====================================================
+    # -----------------------------------------------------
     # GROQ
-    # =====================================================
+    # -----------------------------------------------------
 
     try:
 
@@ -638,73 +603,47 @@ async def handle_message(
         answer = response.choices[0].message.content
 
         if not answer:
+            answer = "Javob olishda xatolik yuz berdi."
 
-            answer = (
-                "Kechirasiz, hozir javob "
-                "bera olmadim."
-            )
-
-        # =================================================
-        # TARIX
-        # =================================================
-
-        chat_histories[chat_id].append(
-            {
-                "role": "user",
-                "content": user_text
-            }
-        )
-
-        chat_histories[chat_id].append(
+        history.append(
             {
                 "role": "assistant",
                 "content": answer
             }
         )
 
-        if len(chat_histories[chat_id]) > MAX_HISTORY * 2:
+        chat_histories[user_id] = history[-10:]
 
-            chat_histories[chat_id] = (
-                chat_histories[chat_id]
-                [-MAX_HISTORY * 2:]
-            )
-
-        # =================================================
-        # TELEGRAM LIMIT
-        # =================================================
-
-        if len(answer) <= 4000:
-
-            await update.message.reply_text(
-                answer
-            )
-
-        else:
-
-            for i in range(
-                0,
-                len(answer),
-                4000
-            ):
-
-                await update.message.reply_text(
-                    answer[i:i + 4000]
-                )
+        await update.message.reply_text(
+            answer
+        )
 
     except Exception as e:
 
-        print(
-            "AI XATOLIK:",
-            repr(e)
-        )
+        print("GROQ XATOSI:", e)
 
         await update.message.reply_text(
-            "⚠️ AI javobida xatolik yuz berdi."
+            "❌ AI bilan bog‘lanishda xatolik yuz berdi."
         )
 
 
 # =========================================================
-# MAIN
+# ERROR
+# =========================================================
+
+async def error_handler(
+    update: object,
+    context: ContextTypes.DEFAULT_TYPE
+):
+
+    print(
+        "BOT ERROR:",
+        context.error
+    )
+
+
+# =========================================================
+# BOT
 # =========================================================
 
 def main():
@@ -713,61 +652,49 @@ def main():
         "UNIVERSAL AI + RASM BOT ISHGA TUSHYAPTI..."
     )
 
-    if grand_mobile_rules:
-
-        print(
-            "Grand Mobile qoidalari tayyor."
-        )
-
-    else:
-
-        print(
-            "Grand Mobile qoidalari topilmadi."
-        )
-
-    app = (
+    application = (
         Application.builder()
         .token(TELEGRAM_TOKEN)
         .build()
     )
 
-    # START
-    app.add_handler(
+    application.add_handler(
         CommandHandler(
             "start",
             start
         )
     )
 
-    # RESET
-    app.add_handler(
+    application.add_handler(
         CommandHandler(
             "reset",
             reset
         )
     )
 
-    # RASM
-    app.add_handler(
+    application.add_handler(
         MessageHandler(
             filters.PHOTO,
             handle_photo
         )
     )
 
-    # MATN
-    app.add_handler(
+    application.add_handler(
         MessageHandler(
             filters.TEXT & ~filters.COMMAND,
             handle_message
         )
     )
 
+    application.add_error_handler(
+        error_handler
+    )
+
     print(
         "UNIVERSAL AI + RASM BOT ISHLAYAPTI!"
     )
 
-    app.run_polling(
+    application.run_polling(
         drop_pending_updates=True
     )
 
