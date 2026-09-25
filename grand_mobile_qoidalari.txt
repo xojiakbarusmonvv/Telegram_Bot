@@ -1,1 +1,767 @@
+from pathlib import Path
 
+rules = r"""GRAND MOBILE — ADMIN QOIDALARI
+================================
+
+I. UMUMIY QOIDALAR
+
+1.1 GRAND MOBILE o‘yinida akkaunt ochish orqali siz server qoidalarini so‘zsiz qabul qilasiz va har qanday vaziyatda ularga rioya qilishni, shuningdek, qoidalardagi o‘zgarishlarni kuzatib borishni o‘z zimmangizga olasiz. Qoidalarni bilmaslik, ularning ifodalanishini tushunmaslik yoki ogohlantirilmaganlik vajlari oqlanishga sabab bo‘la olmaydi va jazoni bekor qilmaydi. Qoidalar maqomi, roli, lavozimi va tajribasidan qat'i nazar barcha o‘yinchilar uchun teng ishlaydi. Alohida reglamentlar faqat ma'muriyat tomonidan "mediamadaniyat vakili" deb tan olingan shaxslarga qo‘llanishi mumkin, ularning tafsilotlari va sanksiyalari ochiqlanmaydi.
+1.2 O‘yinchilarni chalg‘itish, o‘zini ma'muriyat (administratsiya), dasturchilar yoki rahbariyat vakili qilib ko‘rsatish, yoxud o‘yin yaratuvchilariga aloqadorligini da’vo qilish taqiqlanadi. Bu taqiq nikneymlar, xabarlar, feyk akkauntlar va ma'muriyat nomidan qilingan har qanday murojaatlarga tegishlidir. Foyda olish maqsadida aldash ham ushbu qo‘pol qoidabuzarlikka kiradi va oqibatlari hisobga olingan holda jazo kuchaytiriladi.
+Jazo: Personajni 3 kundan 7 kungacha bloklash (BAN).
+Qo‘pol qoidabuzarlikda: Personajni 31 kundan butunlayga bloklash.
+1.3 Qoidalardagi bo‘shliqlar (probel), noaniqliklar yoki muayyan bandlarning to‘g‘ridan-to‘g‘ri yozilmaganligidan foydalanib, jazodan qochishga urinish taqiqlanadi. Aniq qoidabuzarlik holatlarida va halol o‘yin (fair play) prinsiplariga zid kelganda, jazo aynan ushbu qoidaga muvofiq beriladi.
+Jazo: Personajni 3 kundan 31 kungacha bloklash.
+1.4 O‘yinchi o‘z akkaunti va mulkining xavfsizligi uchun shaxsan o‘zi javobgardir. Ma'muriyat yo‘qotilgan, o‘g‘irlangan yoki birovga berib yuborilgan mulkni, hatto firibgarlik holati yuz bergan bo‘lsa ham, qayta tiklab bermaydi.
+1.5 O‘yin rahbariyati server qoidalariga qat'iy bog‘lanib qolmagan holda, aniq vaziyatdan kelib chiqib jazo tayinlash huquqiga ega. Tizimli yoki ommaviy qoidabuzarliklar sodir etilganda, jazo muddatsiz bloklashgacha kuchaytirilishi mumkin. Yakuniy qaror server kuratori yoki yuqori rahbariyatda qoladi.
+1.6 Ma'muriyat va media-hamkorlarning ismlariga o‘xshash, shuningdek, tarkibida haqorat yoki uyatsiz (nenormativ) so‘zlar bo‘lgan nikneymlar taqiqlanadi.
+Jazo: Og‘zaki ogohlantirish.
+Qo‘pol holatda: Personajni 31 kungacha bloklash.
+1.7 O‘yin akkauntini o‘chirish — ortga qaytarib bo‘lmaydigan jarayondir. Agar siz akkauntni o‘chirishga qaror qilgan bo‘lsangiz, ma'lumotlar, personajlar va mulklarni qayta tiklashning imkoni yo‘q. Ma'muriyat xatolik yoki akkaunt buzib kirilgan (vzlom) holatlarda ham o‘chirilgan akkauntlarni tiklash xizmatini ko‘rsatmaydi.
+1.8 Qayta yoki qasddan sodir etilgan qoidabuzarliklarda, shuningdek, og‘irlashtiruvchi holatlarda jazo muddati bir necha barobar oshirilishi mumkin. Og‘irlashtiruvchi holatlarga tizimli qoidabuzarliklar, o‘yin mexanikalarini suiiste'mol qilish va ma'muriyat ogohlantirishlarini mensimaslik kiradi. Yakuniy qarorni server kuratori yoki yuqori rahbariyat qabul qiladi.
+Jazo: Jazo muddatining bazaviy qiymatdan bir necha barobar uzaytirilishi.
+
+II. MULOQOT VA CHATLARDA FOYDALANISH QOIDALARI
+
+2.1 Istalgan chatda o‘yinchi yoki uning qarindoshlarining shaxsiyatiga qaratilgan to‘g‘ridan-to‘g‘ri, yashirin yoki provokatsion (ig‘vokorona) haqoratlar, shuningdek, ularni salbiy ohangda eslash taqiqlanadi.
+O‘yinchini haqorat qilish: MUTE – 15 dan 30 daqiqa gacha.
+Yaqinlarini eslash (salbiy tushunchada): MUTE – 90 dan 180 daqiqagacha.
+Yaqinlarini haqorat qilish: Personajni 3 kundan 10 kungacha bloklash.
+2.2 Taqiqlangan mavzularni to‘g‘ridan-to‘g‘ri yoki yashirin ravishda targ‘ib qilish (propaganda), ommalashtirish yoki ijobiy yoritish taqiqlanadi. Bunga quyidagilar kiradi (lekin bular bilan cheklanmaydi): Giyohvandlik va psixotrop moddalar, ularni iste'mol qilish va tarqatish; Pornografiya, zo‘ravonlik, shahvoniy xarakterdagi sahnalar; Ekstremizm, terrorizm, kamsitish (diskriminatsiya), nafrat uyg‘otish; Suidsid (o‘z joniga qasd qilish), o‘ziga zarar yetkazish, xavfli va qonunbuzar harakatlar.
+Jazo: Personajni 3 kundan 14 kungacha bloklash.
+Qo‘pol holatda: 31 kundan butunlayga bloklash.
+2.3 Har qanday ko‘rinishdagi va mazmundagi reklama taqiqlanadi. Bunga quyidagilar kiradi (lekin cheklanmaydi): begona saytlar, ijtimoiy tarmoqlar, chatlar va kanallar; loyihaga qisman aloqador bo‘lsa-da, rasmiy hisoblanmagan resurslar; boshqa platformalarga taklifnomalar.
+Jazo: MUTE – 60 dan 120 daqiqagacha.
+Qo‘pol holatda: 31 kundan butunlayga bloklash.
+2.4 Istalgan chatda irqchilik (rasizm), ksenofobiya, millatlararo nizolarni keltirib chiqarish, din va e'tiqodni haqorat qilish, real siyosatni muhokama qilish (o‘yin jarayoniga aloqador bo‘lmagan), shuningdek, fashizm va natsizmni va boshqa rasman taqiqlangan ramzlarni har qanday ko‘rinishda eslash, ma'qullash yoki targ‘ib qilish taqiqlanadi.
+Jazo: MUTE – 60 dan 180 daqiqagacha yoki Personajni 1 kundan 31 kungacha bloklash.
+2.5 Mikrofonda har qanday begona audio-translyatsiyalarni amalga oshirish, jumladan musiqa qo‘yish, baqirish, shovqin solish, shuningdek, ovozli dasturlardan foydalanish va mikrofon sezgirligini ataylab yuqori qilib xalaqit berish taqiqlanadi.
+Jazo: MUTE – 20 daqiqagacha.
+Qo‘pol holatda: MUTE – 30 dan 60 daqiqagacha.
+2.6 IC (In Character) va OOC (Out Of Character) o‘rtasidagi konfliktlarni aralashtirish taqiqlanadi. O‘yinchilarni qo‘rqitish, kamsitish, doxing (shaxsiy ma'lumotlarni tarqatish) yoki boshqa manipulyatsiya maqsadlarida ularning real hayotdagi shaxsiy ma'lumotlaridan foydalanib tahdid qilish qat'iyan man etiladi.
+Jazo: Personajni 7 kundan butunlayga bloklash.
+
+III. MA'MURIYAT (ADMINISTRATSIYA) BILAN O‘ZARO MUNOSABAT QOIDALARI
+
+3.1 Report xizmatidan maqsadsiz foydalanish taqiqlanadi: off-top (mavzudan tashqari gaplar) yuborish, flood qilish, o‘yin valyutasi, daraja (lvl), mulk yoki teleport qilishni so‘rash va h.k.
+Jazo: Og‘zaki ogohlantirish / MUTE REPORT – 30 daqiqagacha.
+3.2 Ma'muriyatga nisbatan qo‘pollik qilish, ularni obro‘sizlantirish (diskreditatsiya), tuhmat qilish yoki aldash taqiqlanadi.
+Jazo: MUTE – 30 dan 60 daqiqagacha.
+Qo‘pol holatda: Personajni 3 kundan 31 kungacha bloklash.
+3.3 Server ma'muriyati ishiga xalaqit berish (provokatsiya qilish, ataylab chalg‘itish, reportga flood qilish va boshqalar) taqiqlanadi.
+Jazo: Og‘zaki ogohlantirish.
+Qo‘pol holatda: DEMORGAN – 60 daqiqagacha.
+3.4 Ma'muriyat harakatlarini ommaviy muhokama qilish, trolling qilish va ularga ochiqchasiga e'tiroz bildirish taqiqlanadi. Administratorlar ustidan shikoyatlar jazo berilgan vaqtdan boshlab 2 kun ichida maxsus bo‘lim orqali topshiriladi.
+Jazo: MUTE – 60 daqiqa.
+Qo‘pol holatda: Personajni 1 kundan 5 kungacha bloklash.
+3.5 Ma'muriyat ishiga bevosita daxldor bo‘lgan ichki ma'lumotlar va har qanday materiallarni tarqatish taqiqlanadi.
+Jazo: Personajni 7 kundan 31 kungacha bloklash.
+3.6 O‘yinning rasmiy platformalari va resurslarida sodir etilgan qoidabuzarliklar uchun ham ma'muriyat o‘yin ichida jazo tayinlash huquqiga ega.
+
+IV. O‘YIN AKKAUNTLARI VA PERSONAJLARDAN FOYDALANISH QOIDALARI
+
+4.1 O‘yin valyutasi bilan har qanday maxinatsiyalar (g‘irromliklar) qilish, boshqa o‘yinchilarni aldash (moshennichestvo), shuningdek, o‘yin akkauntlari va personajlarini sotish, birovga berish, almashish yoki sotib olish taqiqlanadi. Chiroyli raqamlar, sim-kartalar yoki mulklarni bozor narxidan 50% dan ortiq farq bilan sotish/sotib olishga urinish maxinatsiya hisoblanadi.
+Jazo: Personajni 3 kundan 7 kungacha bloklash.
+Qo‘pol holatda: 31 kundan butunlayga bloklash.
+4.2 Har qanday tahdidlar yoki o‘yin jarayoniga xalaqit beradigan harakatlar orqali o‘yinchilardan o‘yin boyliklarini undirish taqiqlanadi. Mulkni o‘tkazish haqidagi har qanday ultimatumlar ushbu taqiq ostiga tushadi. Fraktsiyalararo va oilalararo konfliktlar faqat RP doirasida va o‘yinni imkonsiz darajaga keltirmasdan amalga oshirilishi kerak. Oilalar ustidan asosli shikoyatlar ko‘payganda, ma'muriyat oilani tarqatib yuborishgacha (rasformirovaniye) chora ko‘rishga haqli.
+Jazo: Personajni 7 kundan 31 kungacha bloklash.
+4.3 O‘yinchi yaratilgan personajlar sonidan qat'i nazar, har bir serverda faqat bitta biznesga egalik qilishi mumkin.
+Jazo: Og‘zaki ogohlantirish.
+Qo‘pol holatda: Personajni 31 kungacha bloklash.
+4.3.1 Biznesni boshqa akkauntga (jumladan do‘stlariga, turmush o‘rtog‘iga va h.k.) pasaytirilgan narxda (sotib olish narxidan 50% dan kam qiymatda) o‘tkazish, shuningdek, biznesni boshqa o‘yinchilar hisobidan saqlab turish taqiqlanadi. Ushbu qoidani aylanib o‘tish barcha bitim ishtirokchilariga jazo olib keladi.
+Jazo: Barcha ishtirokchilarning personajini 31 kungacha bloklash.
+4.4 O‘yin mulklari, akkauntlari va valyutasini real pullarga sotish, sotib olish yoki bunga urinish qat'iyan taqiqlanadi (RMT).
+Jazo: Personajni 31 kungacha bloklash va qoidabuzarlik orqali olingan mulkni obnulit qilish (to‘liq o‘chirish).
+Qo‘pol holatda: Butunlayga bloklash.
+4.5 Valyuta va mulklarni tekinga (sovg‘a/podarok sifatida) bir sutkada 30.000.000 rubldan ortiq miqdorda o‘tkazish taqiqlanadi. Qoidani qarz (dolg) yoki boshqa sxemalar orqali aylanib o‘tishga urinishlar ham taqiqlangan.
+Jazo: Og‘zaki ogohlantirish va bitimni ortga qaytarish (otkat).
+Qo‘pol holatda: Personajni 31 kungacha bloklash va sovg‘a qilingan mulkni to‘liq obnulit qilish.
+4.6 O‘zining shaxsiy personajlari (multi-akkauntlar) o‘rtasida mulk va valyuta o‘tkazish bilan bog‘liq har qanday aloqa, shuningdek, keyinchalik qaytarib olish sharti bilan uchinchi shaxslar orqali o‘tkazish taqiqlanadi.
+Jazo: Og‘zaki ogohlantirish + mulkni qaytarish.
+Qo‘pol holatda: Barcha ishtirokchilarni 31 kungacha bloklash + o‘tkazilgan mulkni to‘liq obnulit qilish.
+4.7 Serverlar aro mulk va valyutalarni har qanday ko‘rinishda ko‘chirish (sotish, sotib olish, almashish yoki shunchaki o‘tkazish) taqiqlanadi.
+Jazo: Barcha ishtirokchilarning personajini 31 kungacha bloklash + ko‘chirilgan mulkni obnulit qilish.
+4.8 Qo‘shimcha (alt) akkauntlar va personajlar orqali server qoidalarini qasddan buzish, shu jumladan berilgan jazolarni aylanib o‘tish yoki ulardan taqiqlangan sxemalarda foydalanish man etiladi.
+Jazo: Jazo asosiy personajga ham dublikat qilinadi (xuddi shunday jazo beriladi).
+Qo‘pol holatda: Personajni 31 kundan butunlayga bloklash.
+
+V. O‘YIN JARAYONI (RP) QOIDALARI
+
+5.1 (Deystviye, Sobitiye, Popitka) mexanikalarini suiiste'mol qilish, ulardan qoidalarni aylanib o‘tish, o‘yinchini biror natijaga majburlash, o‘yinni ataylab cho‘zish yoki o‘yinchiga tazyiq o‘tkazish uchun foydalanish taqiqlanadi.
+Jazo: MUTE – 20 daqiqagacha.
+5.1.1 Faqat o‘z foydasiga o‘ynash qat'iyan taqiqlanadi. Ya'ni, o‘yinchi o‘z harakatlarini shunday tasvirlaydiki, unda muvaffaqiyatsizlik, javob bera olmaslik yoki salbiy oqibatlar imkoniyati umuman qolmaydi (masalan, personaj o‘lmas yoki hamma narsani oldindan biladigandek ko‘rsatilsa).
+Jazo: DEMORGAN – 20 daqiqagacha.
+5.2 O‘yinda afzallik beradigan har qanday uchinchi tomon dasturlaridan (PO) foydalanish, saqlash yoki tarqatish taqiqlanadi. Bunday taqiqlangan vositalarga quyidagilar kiradi:
+- Chitlar, avtoklikerlar, makroslar, botlar, skriptlar;
+- O‘yin klientining ishlashiga yoki o‘yin jarayoniga ta’sir o‘tkazadigan har qanday dastur va modifikatsiyalar;
+- Tizim bilan o‘zaro aloqani osonlashtirish, tugmalar hajmini yoki bosilish maydonini sun’iy ravishda kattalashtirish, personaj/transport/qurol boshqaruvini soddalashtirish;
+- Afzallik olish, tizimni aylanib o‘tish yoki foyda ko‘rish maqsadida o‘yin modidagi baglar, xatoliklar yoki texnik zaifliklardan foydalanish (Bagoyuz).
+Bagoyuz uchun jazo: WARN / Personajni 3 kungacha bloklash.
+Avtokliker va skriptlar uchun jazo: Personajni 3 kundan 7 kungacha bloklash.
+Uchinchi tomon dasturlarini (PO) tarqatish uchun jazo: Personajni 7 kundan 31 kungacha bloklash.
+Tugmalar hajmi va bosilish maydonini oshiruvchi modifikatsiyalar uchun jazo: Personajni 7 kungacha bloklash.
+5.3 O‘yinchi boshlangan RP-vaziyatni mantiqiy yakunigacha yetkazishga majbur. O‘yindan chiqish (Exit/Q), AFKga ketish, yopiq zonalarga yoki suvga qochish, yoxud vaziyatni davom ettirishga imkon bermaydigan boshqa harakatlar orqali RPdan qasddan qochish taqiqlanadi. Jarayonni asossiz ravishda ataylab cho‘zish ham man etiladi. Texnik nosozlik (krash/vylet) yuz berganda, o‘yinchi buni isbotlovchi dalil (fiksatsiya) taqdim etishi shart, aks holda vaziyat qasddan qochish deb baholanadi.
+Jazo: DEMORGAN – 60 daqiqagacha.
+5.4 Uy yoki kvartira kirish joyida, shuningdek, uy/kvartira hududida yashovchilarni yoki ularning mehmonlarini o‘ldirish yoki ularga zarar yetkazish (SK - Spawn Kill) taqiqlanadi. Uy hududi deganda bino devoridan to eng yaqin bordyur yoki yo‘l chekkasigacha bo‘lgan masofa tushuniladi.
+Eslatma: Yashovchilarga o‘z hududida turib begona o‘yinchilarga jiddiy sababsiz birinchi bo‘lib o‘t ochish taqiqlanadi. Jiddiy sabab sifatida provokatsiya qabul qilinadi.
+Jazo: DEMORGAN – 120 daqiqagacha.
+5.4.1 Provokatsiya — uy yoki kvartira hududida yashovchilarga, ularning mehmonlariga yoki ushbu hududning o‘ziga qaratilgan har qanday agressiv harakatlardir. Provokatsiyaga quyidagilar kiradi: hududda qurol ushlab turish, o‘t ochish, tahdidlar, tizimli haqoratlar, mulkni tark etish talabini mensimaslik va boshqa tazyiq yoki xavf tug‘diruvchi harakatlar.
+Eslatma: Konflikt oqibatlaridan qochish va RP-vaziyatdan qutulish maqsadida o‘z uyi yoki kvartirasi hududiga qochib kirish qat’iyan taqiqlanadi.
+Jazo: DEMORGAN – 120 daqiqagacha.
+5.4.2 Kuch ishlatish huquqi. Agar chaqirilmagan mehmonga hududni tark etish ochiqchasiga aytilgan bo‘lsa va u rad etsa yoki provokatsiyani davom ettirsa, yashovchilar unga nisbatan kuch ishlatish, jumladan o‘t ochish huquqiga ega. Talabdan keyin ham hududda qolgan o‘yinchi javob tariqasida o‘t ochishga (otvetniy ogon) haqli emas.
+Jazo: DEMORGAN – 120 daqiqagacha.
+5.5 Media shaxslarning (strimerlar/blogerlar) strim yoki roliklarini qasddan buzish, xalaqit berish yoki jarayonga aralashish, jumladan strimsnayp, DM, DB va boshqa shunga o‘xshash harakatlarni amalga oshirish taqiqlanadi.
+Jazo: DEMORGAN – 60 daqiqagacha.
+Qo‘pol qoidabuzarlikda: Personajni 3 kungacha bloklash.
+5.6 Inson qadr-qimmatini kamsitadigan, ma’naviy zarar yetkazadigan harakatlarni o‘ynash (otiqrish), shuningdek, axloqsiz (amoral) vaziyatlarni yaratish (shuningdek, tegajog‘lik/domogatelstvoning barcha turlari) taqiqlanadi.
+Jazo: DEMORGAN – 30 dan 60 daqiqagacha + MUTE – 60 daqiqagacha.
+Qo‘pol qoidabuzarlikda: Personajni 7 kungacha bloklash.
+5.7 Avtomobil raqamlarida (nomernie znaki) har qanday haqoratli, kamsituvchi yoki taqiqlangan so‘z va iboralardan foydalanish taqiqlanadi (bunga yaqinlarni, ma'muriyatni, o‘yinchilarni, millat va dinlarni haqorat qilish kiradi).
+Jazo: Personajni 31 kungacha bloklash.
+Eslatma: Agar o‘yinchi qoidabuzarlik sababini bartaraf etsa, ya’ni avtomobil raqamini 5.7 bandi talablariga mos keladigan raqamga o‘zgartirsa, bloklash muddati muddatidan oldin yechilishi mumkin.
+5.8 Oilalarga (semya) uyatsiz, haqoratli yoki plagiatorlik (mavjud oilalarni nusxalovchi) nomlarini qo‘yish, shuningdek, oila nomida yaqinlarni/ma'muriyatni/o‘yinchilarni/millat yoki dinlarni kamsituvchi shaklda eslash taqiqlanadi.
+Jazo: Personajni 31 kungacha bloklash.
+Eslatma: Agar qoidabuzarlik sababi bartaraf etilsa, ya’ni oila nomi 5.8 bandi talablariga muvofiq to‘g‘ri nomga o‘zgartirilsa, bloklash muddati muddatidan oldin yechilishi mumkin.
+5.9 Tizimli tadbirlar (iventy/meropriyatiya) o‘tkazilishiga qasddan xalaqit berish, shuningdek, boshqa o‘yinchilarning ushbu tadbirlarda ishtirok etishi yoki topshiriqlarni bajarishiga to‘sqinlik qilish taqiqlanadi.
+Jazo: WARN.
+
+II. SHIKOYAT QILISH TARTIBI
+
+1.1 UMUMIY QOIDALAR
+1.1.1 Shikoyat qilish — bu o‘yinchi yoki administrator tomonidan qonunbuzarlik sodir etilganda xabar berish uchun rasmiy vositadir. Shikoyat faqat qoidabuzarlikning aniq va obyektiv dalillari mavjud bo‘lgandagina ko‘rib chiqiladi.
+1.1.2 Shikoyatlar bo‘limi o‘zaro muloqot qilish, muhokamalar olib borish, savol-javoblar, texnik muammolar yoki takliflar kiritish uchun mo‘ljallanmagan. Ushbu maqsadlar uchun maxsus platformalar mavjud:
+- O‘yinning rasmiy Discord serveri: https://discord.gg/grnd
+- Texnik yordam markazi: https://support.grnd.gg/
+1.1.3 Ushbu qoidalarni buzgan holda rasmiylashtirilgan har qanday shikoyat ko‘rib chiqilmasdan, avtomatik ravishda rad etiladi.
+
+1.2 SHIKOYATLAR QUYIDAGI HOLLARDA KO‘RIB CHIQILMAYDI (RAD ETILADI):
+1.2.1 Dalillar ruxsat etilmagan platformalarga joylangan bo‘lsa:
+Skrinshotlar uchun faqat: o‘yin launcheri, imgur.com, yapx.ru, Yandex Disk, Google Disk.
+Videolar uchun faqat: youtube.com, imgur.com, rutube.ru, Yandex Disk, Google Disk.
+1.2.2 Dalillar umuman mavjud bo‘lmasa, qirqib olingan (obrezani), tahrirlangan (otredaktirovani) bo‘lsa yoki ularda qoidabuzarlikning to‘g‘ridan-to‘g‘ri va aniq belgilari ko‘rinmagan bo‘lsa.
+1.2.3 Shikoyat tavsifida (opisaniye) sodir bo‘lgan voqeaning aniq, lo‘nda va mantiqiy bayoni mavjud bo‘lmasa.
+1.2.4 Shikoyat jabrlangan personajga aloqasi bo‘lmagan begona akkauntdan berilgan bo‘lsa.
+Istisno: Akkauntdagi uchta faol personajning ixtiyoriy bittasidan shikoyat kiritishga ruxsat beriladi.
+1.2.5 Taqdim etilgan dalillarda o‘yinchining o‘zi uchinchi tomon dasturlari (chitlar, makroslar, taqiqlangan modifikatsiyalar va h.k.) ishlatgani aniqlansa.
+1.2.6 Insident (yoki jazo berilgan) vaqtdan boshlab 48 soatdan ortiq vaqt o‘tib ketgan bo‘lsa.
+Istisno: O‘yin rahbariyati, server kuratori yoki katta ma'muriyat qaroriga ko‘ra jiddiy va qo‘pol qoidabuzarliklar aniqlangan hollarda ushbu muddat uzaytirilishi mumkin.
+1.2.7 Shikoyat matnida haqoratlar, qidirg‘on so‘zlar (nenormativnaya leksika), toksik xulq-atvor, provokatsiya (ig‘vo) yoki tahdidlar mavjud bo‘lsa.
+1.2.8 Shikoyat voqeaga aloqador bo‘lmagan uchinchi shaxs tomonidan kiritilgan bo‘lsa.
+Istisno: Agar uchinchi shaxs voqeaga passiv guvoh bo‘lgan bo‘lsa, o‘zi provokatsiya yaratmagan bo‘lsa va u taqdim etgan dalillar qaror chiqarish uchun mutlaqo yetarli bo‘lsa, shikoyat ko‘rib chiqilishi mumkin. Shuni yodda tutingki, faqatgina ig‘vo qilish, qoidabuzarlikni qasddan fiksatsiya qilish yoki boshqa o‘yinchilarga zarar yetkazish maqsadida topshirilgan arizalar ko‘rib chiqilmaydi.
+1.2.9 Shikoyat nusxalangan (dublikat — oldin ko‘rib chiqilgan) bo‘lsa yoki o‘z ichiga spam elementlarini olsa.
+1.2.10 Videoyozuv yaroqsiz deb topilsa (agar undan aynan nima sodir bo‘lganini aniqlab bo‘lmasa). Videoda o‘yin interfeysi va barcha matnlar aniq o‘qilishi, ishtirokchilar va ularning harakatlari yaqqol ko‘rinishi, shuningdek, vaziyatni anglash uchun ovoz (zvuk) tushunarli bo‘lishi shart.
+
+1.3 SHIKOYATGA QO‘YILADIGAN MAJBURIY TALABLAR
+1.3.1 Shikoyat arizasi majburiy tartibda quyidagilarni o‘z ichiga olishi shart:
+- Berilgan jazoning skrinshoti (agar jazo o‘sha vaqtda berilgan bo‘lsa);
+- Sodir bo‘lgan voqeaning aniq va mantiqiy tavsifi;
+- To‘liq dalillar (video/skrinshotlar);
+- Qoidabuzarning (o‘yinchi yoki administratorning) to‘g‘ri yozilgan NickName.
+1.3.2 Quyidagilar qat’iyan taqiqlanadi:
+- Bir vaqtning o‘zida bitta shikoyatda bir nechta o‘yinchi yoki administrator ustidan ariza berish. (Agar qoidabuzarlar bir nechta bo‘lsa, har biriga alohida dalillar va holat yozilgan shaxsiy shikoyat ochilishi kerak. Bir nechta shaxslarni bitta arizaga birlashtirish mumkin emas);
+- Aniq ism-sharifni ko‘rsatmasdan ariza matnini umumiy qilib "administratsiyaga" yoki "o‘yinchilarga" deb manzillash.
+Manzillash prinsiplari:
+- Agar qoidabuzar o‘yinchi bo‘lsa – shikoyat o‘yinchi ustidan ochiladi.
+- Agar qoidabuzar administrator bo‘lsa – shikoyat administrator ustidan ochiladi.
+- Agar siz chiqarilgan yakuniy verdikt (qarori) bilan kelishmasangiz – verdiktni chiqqan administrator ustidan shikoyat kiritasiz.
+- Takroriy qarorga ham e’tiroz mavjud bo‘lsa – shikoyat loyiha kuratorining (kurator proekta) yakuniy qarorigacha bo‘lgan bosqichma-bosqich tartibda yuqoriga kuzatiladi.
+1.3.3 Shikoyat tavsifi mazmunli va tushunarli tilda yozilishi shart. To‘g‘ri yozish bo‘yicha namunalar:
+Namuna 1 (Yashil zonadagi DM):
+"Nick_Name ismli o‘yinchi kasalxona yaqinida menga qarata o‘t ochdi. Qoidabuzarlik isbotlangan videoni (yoki skrinshotni) ilova qilyapman. Qoidabuzarlik turi: Yashil zonada DeathMatch (DM in GZ)."
+Namuna 2 (Noqonuniy/Xato berilgan jazo):
+"Administrator Nick_Name menga nonRP uchun asossiz ravishda demorgan jazosini berdi. Aybsiz ekanligimni isbotlovchi dalillar ilova qilinmoqda — videoda qoidabuzarlik bo‘lmagani aniq ko‘ringan. Vaziyatni qayta ko‘rib chiqishingizni so‘rayman."
+Namuna 3 (O‘yin mulkini real pulga sotish/sotib olish):
+"Nick_Name ismli o‘yinchi chatda uyni real pulga sotib olishni taklif qildi (RMT). Qoidabuzarlik isbotini ilova qilyapman."
+1.3.4 Hech qanday aniq faktlar va dalillar keltirilmasdan, faqatgina umumiy iboralar bilan yozilgan (masalan: "shuni hal qilib beringlar", "bu nima bo‘lgani", "meni shunchaki asossiz jazolashdi") shikoyatlar ko‘rib chiqilmasdan, to‘g‘ridan-to‘g‘ri rad etiladi.
+1.4 KO‘RIB CHIQISH MUDDATLARI
+1.4.1 Shikoyatlar e’lon qilingan vaqtdan boshlab 48 soat ichida qayta ishlanadi (ko‘rib chiqiladi).
+Istisno: Alohida murakkab yoki favqulodda vaziyatlarda o‘yin rahbariyati qarori bilan bu muddat 72 soatgacha uzaytirilishi mumkin.
+1.4.2 Agar belgilangan muddat ichida shikoyatga javob berilmasa, server kuratori nomiga takroriy shikoyat yuborish lozim.
+1.5 KO‘RIB CHIQISH TARTIBI
+1.5.1 Istalgan administrator o‘z xohish-istaklaridan mutlaqo mustaqil ravishda, faqatgina sodir etilgan qoidabuzarlik faktiga tayangan holda shikoyatni ko‘rib chiqish huquqiga ega.
+1.5.2 Ma'muriyatning ichki dalillari (vnutrennie dokazatelstva) o‘yinchiga taqdim etilmaydi (peredacha taqiqlanadi). Biroq, ushbu dalillar katta ma'muriyat, server kuratori yoki o‘yin rahbariyati so‘rovi bo‘yicha ular tomonidan tekshirish uchun ochiq hisoblanadi.
+
+III. YASHIL ZONA (GREEN ZONE | GZ) QOIDALARI
+
+1. ASOSIY QOIDALAR
+1.1 Yashil zonada [Green Zone | GZ] RP otigrovka (rol ijro etish) yoki sabab mavjudligidan qat’i nazar, o‘yinchilarni o‘ldirish, shuningdek, ularga zarar (uron) yetkazish taqiqlanadi.
+Eslatma: Yashil zona hududiga obyektning o‘zi hamda unga tutashgan maydonlar (turargohlar, bordyurlar va h.k.) kiradi.
+Aniqlik: Kuch ishlatar tuzilmalar (Politsiya/FSB/Armiya) xodimlari, agar ularga safda turgan paytda yoki xizmat vazifalarini bajarayotganda hujum qilinsa, Yashil zonada javob tariqasida o‘t ochish huquqiga egadirlar. Birinchi bo‘lib o‘t ochishni boshlash (initsiyatsiya) taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqa + WARN.
+1.2 Yashil zonada bo‘lgan o‘yinchilarga nisbatan har qanday jinoiy harakatlarni amalga oshirish taqiqlanadi, jumladan:
+- Odam o‘g‘irlash (poxisheniye);
+- Talonchilik (ogrableniye);
+- Arqonlar, qoplar va boshqa RP asboblaridan (bog‘lash maqsadida) foydalanish.
+Jazo: WARN; ko‘p sonli qoidabuzarliklarda — personajni 3 kungacha bloklash.
+1.3 Yashil zonadan RP vaziyatlardan (sitiuatsiyalardan) qochish vositasi sifatida foydalanish taqiqlanadi.
+Jazo: WARN.
+1.4 O‘yinchilarni RP asboblari (arqonlar va boshqalar) yordamida Yashil zonadan majburlab olib chiqish taqiqlanadi.
+Jazo: WARN.
+1.5 Otishma (perestrelka) paytida Yashil zonaga kirish taqiqlanadi.
+Istisno: Agar zona ichiga tasodifan kirib qolingan bo‘lsa, buni isbotlash uchun o‘yinchida majburiy ravishda video yozuv (fiksatsiya) bo‘lishi shart.
+Muhim eslatma: Agar siz Yashil zonadan tashqarida bo‘lsangiz-u, lekin siz chora ko‘rmoqchi bo‘lgan o‘yinchi Yashil zona ichida bo‘lsa, bunday harakatlar baribir qoidabuzarlik hisoblanadi. Bu holatda, sizning qayerda turganingizdan qat'i nazar, Yashil zona qoidalarini buzganlik uchun shaxsan o‘zingiz javobgarlikka tortilasiz.
+Jazo: DEMORGAN – 30 daqiqa.
+
+2. YASHIL ZONALAR RO‘YXATI
+2.1 Davlat muassasalari:
+- Hukumat (Pravitelstvo)
+- Arzamas shahar kasalxonasi
+- Yujniy shahar kasalxonasi
+- Yangiliklar tarmog‘i (Novostnaya set)
+- Arzamas shahar politsiyasi
+- Yujniy shahar politsiyasi
+- FSB
+2.2 Ish joylari:
+- Taksistlik ishi
+- Avtobus haydovchisi ishi
+- Pochtachi ishi
+- Mexaniklik ishi
+- Dalnoboyshik (Yuk mashinasi haydovchisi) ishi (Batirevo, Litkarino, Yujniy)
+- Inkassatorlik ishi
+- Yo‘l xizmati ishi (Arzamas, Yujniy)
+- Zavodlar
+- Shaxta
+- Kamenolomnya (Tosh koni)
+- Ferma
+- Saralash markazi (Sortirovochniy sentr)
+2.3 Infratuzilma va jamoat joylari:
+- Avtosalonlar va motosalon
+- Vokzallar
+- Turargohlar (Stoyanki)
+- Avtobozor (Avtorinok)
+- STO (Avtotexxizmat)
+- Avtomaktab
+- Voenkomat (Harbiy komissariat)
+- Banklar va Bankomatlar
+- Cherkov
+- Qora bozor (Chorniy rinok)
+- Pochta bo‘limlari
+- Do‘konlar (24/7, kiyim-kechak, qurol do‘konlari)
+- Restoranlar
+- AZS (Yoqilg‘i quyish shaxobchalari)
+- Kazino
+- Konteynerlar
+- Barcha binolarning interyerlari (OPG binolari interyerlaridan tashqari)
+- Avtobus bekatlari
+- Iventlar (tadbirlar) o‘tkaziladigan zonalar (faqat tadbir o‘tayotgan vaqtda)
+
+IV. LIDERLAR VA ULARNING O‘RINBOSARLARI UCHUN QOIDALAR
+
+1. UMUMIY QOIDALAR
+1.1 Lider o‘ziga berilgan to‘liq muddatni (srok — 15 kun) oxirigacha yetkazib berishga majburdir. Agar lider jiddiy sababsiz o‘z xohishi bilan muddatidan oldin ketsa yoki ma'muriyat (administratsiya) tomonidan vazifasidan olinsa, uning o‘yin akkounti bloklanadi.
+Eslatma: Agar lider hurmatli/uzrli sababga ko‘ra o‘z lavozimini tark etsa, u blokirovkasiz o‘chiriladi va vaqtincha lider vazifasini bajaruvchi (vrio) tayinlanib, liderlik postiga vakant joy ochiladi.
+Jazo: Personajni 3 kundan 7 kungacha bloklash + 60 kungacha Liderlar qora ro‘yxatiga (ChS) kiritish.
+1.1.1 Liderlik yoki administratorlik lavozimidan olingan o‘yinchi, olingan kunidan boshlab oradan 5 kun o‘tgach qaytadan liderlikka ariza topshirishi mumkin.
+Eslatma: Muddatni muvaffaqiyatli yakunlash lavozimdan olinish (snyatiye) hisoblanmaydi.
+1.2 Lavozimga yangi tayinlangan lider o‘z fraksiyasi uchun 24 soatga muzlatish (zamorozka) olish huquqiga ega. Muzlatish davrida tashkilotga bevosita daxldor bo‘lgan har qanday tadbirlarda ishtirok etish taqiqlanadi.
+Jazo: Og‘zaki ogohlantirish.
+1.3 Lider server kuratori bilan oldindan kelishgan holda tashkilot tarkibini qisman rasformirovka qilish (tozalash) huquqiga ega. Butun fraksiyani to‘liq rasformirovka qilish qat'iyan taqiqlanadi.
+Jazo: Lavozimdan olinish (Snyatiye).
+1.4 Tashkilot turidan qat'i nazar, lider o‘zining boshqaruv muddati davomida 9-rangga (o‘rinbosar) ko‘pi bilan 3 ta o‘yinchini tayinlash huquqiga ega. Limitdan oshib ketish qoidabuzarlik hisoblanadi.
+Aniqlik: Zaruriyat tug‘ilganda server kuratori ushbu limitga o‘zgartirish kiritishi mumkin.
+Jazo: Yozma hayfsan.
+1.5 Davlat tashkilotlarida Katta tarkib (Starshiy sostav) bo‘lib Lider va undan keyingi ikkita ketma-ket ranglar (10, 9, 8-ranglar) hisoblanadi.
+Eslatma: Lider 8-rangga ko‘pi bilan 8 ta xodimni tayinlash huquqiga ega.
+1.5.1 Jinoiy tashkilotlarda (OPG) Katta tarkib bo‘lib Lider va uning o‘rinbosarlari (10, 9-ranglar) hisoblanadi.
+1.6 Davlat tashkiloti lideri o‘z lavozimini egallagan birinchi kunida, fraksiya kuratorining ruxsati bilan o‘z xodimlarini ishonchnoma bo‘yicha (po doverennosti) tayinlash huquqiga ega.
+Jazo: Yozma hayfsan.
+1.7 Tashkilot lideri o‘z fraksiyasi xodimlarini qoidabuzarliklar uchun yoki ularga bo‘lgan ishonchini yo‘qotgan taqdirda ishdan bo‘shatish huquqiga ega.
+Eslatma: Liderda ishdan bo‘shatish uchun video/audio dalillar va jiddiy sabablar bo‘lishi shart. Aks holda, lider egallab turgan lavozimidan olinishigacha bo‘lgan jazoga tortiladi.
+1.8 Lider o‘z rahbarlik muddati davomida fraksiya katta kuratorining ruxsati bilan bir marta tashkilotni muzlatish (zamorozka — 12 dan 24 soatgacha) olishi mumkin.
+Eslatma: OPG lideri bir srok davomida sutkasiga strelalardan ko‘pi bilan ikkita muzlatish olish huquqiga ega.
+1.9 Lider bir srok davomida 5 marta otgul (dam olish kuni) olish huquqiga ega, biroq ketma-ket ikki martadan ortiq otgul olish mumkin emas. Otgullar liderlik muddatiga (srok) hisoblanmaydi.
+1.10 Lider ketma-ket 3 tadan ortiq srok davomida o‘z lavozimida qola olmaydi.
+Eslatma: OPG lideri barcha bizneslarni qo‘lga kiritgandan so‘ng ham o‘z lavozimida turish huquqiga ega.
+Istisno: Fraksiya katta kuratori/server yoki loyiha kuratori roziligi bilan istisnolar bo‘lishi mumkin.
+1.10.1 Bitta tashkilotda liderlik lavozimini boshqa o‘yinchiga o‘tkazish (peredacha) ketma-ket 3 martadan oshishi mumkin emas. Ketma-ket 3 marta uzatilgandan so‘ng, yangi lider obzvon (suhbat) orqali tayinlanadi.
+1.11 Agar tashkilot lideri yozma hayfsan (pismenniy vigovor) olsa, uni faqat oradan 24 soat o‘tgach olib tashlash (snyat) mumkin. Og‘zaki ogohlantirishni (ustniy vigovor) esa kurator topshirig‘ini bajargan holda 12 soatdan keyin olib tashlash mumkin.
+Eslatma: Agar hayfsan olib tashlangan bo‘lsa, keyingi hayfsanni faqat 24 soat o‘tgach olib tashlashga ruxsat beriladi.
+1.12 Liderlik postini faqat quyidagi shartlar bir vaqtda bajarilganda o‘rinbosarga o‘tkazishga ruxsat beriladi: o‘rinbosar hayfsanlarsiz 7 kundan ortiq ishlagan bo‘lishi va tashkilot katta kuratori huzurida attestatsiya suhbatidan (obzvon) o‘tishi shart. Agar amaldagi liderda topshirish vaqtida faol jazo yoki cheklovlar bo‘lsa, liderlikni o‘tkazish taqiqlanadi. Faol jazo choralari mavjud bo‘lganda ikkinchi srokka qolishga ruxsat berilmaydi.
+
+2. LIDER VA O‘RINBOSARNING MAJBURIYATLARI
+2.1 Kunlik minimal onlaynni 2+ soat darajasida ushlab turish majburiy.
+Eslatma: AFK holatida o‘tkazilgan vaqt onlaynga hisoblanmaydi.
+Jazo: Og‘zaki ogohlantirish, takrorlansa — yozma hayfsan.
+2.2 O‘z fraksiyasida onlaynni ushlab turish va muntazam ravishda tashkilotga qabullar (nabori) o‘tkazish.
+Jazo: Yozma hayfsan.
+2.3 Lider tashkilotning rasmiy Discord serveridagi xodimlarning xulq-atvorini nazorat qilishga va rasmiy kanallardagi ma'lumotlarning dolzarbligini ta'minlashga majburdir.
+Jazo: Yozma hayfsan.
+2.4 Lider tashkilot tarkibi ichidagi ig‘vo (provokatsiya) va konfliktlarning oldini olishga majbur. Katta tarkib tomonidan ommaviy qonunbuzarliklar sodir etilgan taqdirda lider yozma hayfsan oladi, qoidabuzar katta tarkib xodimlari esa ishdan bo‘shatiladi.
+Jazo: Yozma hayfsan.
+2.5 Agar rahbarlikni davom ettirish (keyingi srokka qolish) istagi bo‘lsa, o‘z muddati davomida kamida 1 ta to‘liq va muvaffaqiyatli Global Tadbir (GMP) o‘tkazishi shart. Liderlarning hamkorlikda GMP tashkil qilishlari ham tadbir o‘tkazilgan deb hisoblanadi. O‘tkazilgan har bir GMP bo‘yicha fraksiya kuratoriga hisobot (otchyot) topshirish majburiydir. GMPda shunchaki ishtirok etish tadbir o‘tkazdi deb hisoblanmaydi — bu har bir aloqador tashkilotning burchidir.
+2.6 Tashkilot kuratorlari va katta kuratorlarining talablariga quloq solish va ularni bajarish shart.
+Aniqlik: Lider fraksiyani boshqarishni kurator (fraksiyaga biriktirilgan administrator) yordamida amalga oshiradi. Fraksiyadagi o‘zgarishlar bo‘yicha har qanday qarorlar kurator bilan muhokama qilinishi kerak.
+Jazo: Yozma hayfsan; qo‘pol ravishda buzilganda — Lavozimdan olinish (Snyatiye).
+2.7 O‘z tashkilotida tanish-bilishchilikka (blat) yo‘l qo‘ymaslik.
+Eslatma: Davlat tuzilmalari liderlari 8+ rangdagi har bir xodimning lavozimini ko‘tarishni fraksiya kuratori bilan kelishishlari shart.
+Istisno: Jinoiy tashkilotlar (OPG) bundan mustasno (ularda blatga ruxsat berilgan).
+Jazo: Yozma hayfsan; qo‘pol ravishda buzilganda — Lavozimdan olinish (Snyatiye).
+2.8 Lider va uning o‘rinbosarlari tashkilotda qulay ish muhitini saqlashga hamda tarkibga muntazam ravishda server qoidalari va to‘g‘ri RP muloqot qoidalarini o‘rgatishga majburdirlar.
+
+3. LIDERLAR VA ULARNING O‘RINBOSARLARIGA TAQIQLANADI:
+3.1 Fraksiya kuratorining ruxsatisiz o‘z NickName’ini o‘zgartirish.
+Jazo: Yozma hayfsan.
+3.2 Liderga tashkilot bo‘yicha qabul qilingan qarorlardan har qanday moddiy yoki shaxsiy manfaat (vigoda) olish taqiqlanadi. Ranglar va lavozimlarni sotish, vakolatlarni pullash, o‘yinga qabul qilish hamda o‘yin ichidagi yoki real valyuta evaziga har qanday rag‘batlantirishlar, shuningdek, bunday mukofotlar haqidagi kelishuvlar qat'iyan taqiqlanadi.
+Jazo: Personajni 31 kungacha bloklash va liderlik lavozimidan chetlashtirish.
+3.3 O‘yinchilar ko‘z oldida o‘zini nomunosib tutish (konfliktlar yaratish, noadekvat harakatlar qilish) taqiqlanadi. IC (o‘yin ichidagi) muloqotda keskin iboralar va so‘kinishlarga faqatgina RP vaziyat doirasida va zarurat bo‘lgandagina, suiiste'mol qilmagan holda ruxsat beriladi.
+Eslatma: Ijtimoiy tarmoqlarda, Discord'da va barcha moderatsiya qilinadigan platformalarda o‘yinchilarni/liderlarni/ma'muriyatni haqorat qilish taqiqlanadi.
+Jazo: Og‘zaki yoki yozma hayfsan; qo‘pol ravishda buzilganda — Lavozimdan olinish (Snyatiye).
+3.4 O‘z tashkiloti a'zolari orasidagi qonunbuzarliklarga ko‘z yumish (bilib bilmaslikka olish) taqiqlanadi.
+Jazo: Yozma hayfsan; qo‘pol ravishda buzilganda — Lavozimdan olinish (Snyatiye).
+3.5 O‘yinchining rangini sutkasiga 1 tadan ortiq ko‘tarish taqiqlanadi. Tashkilot qoidalarida ko‘zda tutilgan majburiy hisobot faoliyatisiz o‘yinchining rangini ko‘tarish taqiqlanadi.
+Eslatma: Bir vaqtning o‘zida bir nechta rangga ko‘tarishga faqatgina ichki reglament bo‘yicha muayyan lavozim uchun o‘tish rangi belgilangan bo‘lsa va ushbu rangga yetguncha tayinlash imkonsiz bo‘lsa, majburiy video/foto fiksatsiya bilan ruxsat beriladi.
+Istisno: OPG bundan mustasno.
+Jazo: Yozma hayfsan; qo‘pol ravishda buzilganda — Lavozimdan olinish (Snyatiye).
+3.6 Ogohlantirish (warn) yoki personaj blokirovkasini (ban) olgan o‘yinchini o‘zining eski rangiga qaytarish taqiqlanadi. Qaytadan qabul qilinganda u 1-rangga tayinlanadi va karyera o‘sishini boshqatdan o‘tadi.
+Istisno: Har qanday istisnolar faqat yo‘nalish katta kuratori yoki server kuratorining oldindan bergan roziligi bilan bo‘lishi mumkin. O‘z xohishi bilan ishdan bo‘shagan o‘yinchi eski rangiga tiklanmaydi (OPG bundan mustasno).
+Jazo: Yozma hayfsan.
+3.7 Davlat tashkilotlarida o‘rinbosarlarni tashkilot katta kuratorining ruxsatisiz tayinlash taqiqlanadi.
+Jazo: Yozma hayfsan; qo‘pol ravishda buzilganda — Lavozimdan olinish (Snyatiye).
+3.8 Lider yoki uning o‘rinbosariga qo‘shimcha personajlar (tvinklar) ochish taqiqlanmagan. Biroq, majburiyatlarni bajarish davrida lider yoki uning o‘rinbosari har qanday personajida ma'muriyatdan jazo olsa, bu qoidabuzarlik asosiy yetakchilik lavozimiga priravnyat qilinadi (tenglashtiriladi).
+Jazo: Yozma hayfsan; qoidabuzarlik takrorlansa — Lavozimdan olinish (Snyatiye).
+3.9 O‘yinchilarni tashkilotga mos bo‘lmagan joylarda, jumladan, spawn (tirilib chiqish joylari) va biznes interyerlarida qabul qilish, shuningdek, o‘yinchilarni rasmiy qabullardan (nabor) tashqarida olish taqiqlanadi. Elektron arizalar orqali qabul qilish bundan mustasno bo‘lib, bu qoida jinoiy tashkilotlarga (OPG) taalluqli emas.
+Jazo: Yozma hayfsan.
+3.10 Lider o‘yin qoidalarini buzadigan, ularni chetlab o‘tadigan yoki fraksiyaning logi (tarixi) va RP mantiqiga zid keladigan ichki qoidalar va ustavlar yaratish huquqiga ega emas.
+Jazo: Yozma hayfsan; qo‘pol ravishda buzilganda — Lavozimdan olinish (Snyatiye).
+3.11 Tashkilot tarkibida 4-rangdan yuqori bo‘lgan non-RP formatdagi NickName'ga ega o‘yinchilarning bo‘lishi taqiqlanadi. 5-rangga ko‘tarilish uchun o‘yinchi majburiy ravishda "Ism_Familiya" (Имя_Фамилия) formatidagi nikka ega bo‘lishi shart.
+Jazo: Yozma hayfsan.
+3.12 Pauzasiz (eskepga chiqmasdan) AFK holatida bo‘lish (RP uyqu) taqiqlanadi.
+Jazo: Og‘zaki ogohlantirish.
+
+V. DAVLAT TASHKILOTLARINING UMUMIY QOIDALARI
+
+1. UMUMIY QOIDALAR
+1.1 O‘yinchilar bilan barcha fraksiyalararo o‘zaro aloqalar, jumladan obzvonlar (suhbatlar), suhbatlar (sobesedovaniye) va har qanday ichki tadbirlar faqat sizning serveringiz uchun mo‘ljallangan rasmiy Discord tashkilotida o‘tkaziladi. Bunday tadbirlarni boshqa har qanday begona Discord serverlarida yoki uchinchi tomon platformalarida o‘tkazish taqiqlanadi.
+Jazo: O‘yin qoidalariga muvofiq jazo.
+1.2 Tashkilotlarning umumiy qora ro‘yxatiga (ChS) kiritilgan o‘yinchilarni qabul qilish taqiqlanadi.
+Jazo: Liderga og‘zaki ogohlantirish; qo‘pol ravishda buzilganda — Liderga yozma hayfsan.
+1.3 Patrul xizmati uchun faqat standart transport vositalaridan foydalanishga ruxsat beriladi. Patrulda og‘ir zirhli texnikadan foydalanish taqiqlanadi. Bunday texnikani qo‘llashga faqat maxsus tadbirlar o‘tkazilayotgan vaqtda ruxsat beriladi. Og‘ir zirhli texnikadan foydalanganda kuzatuv (soprovojdeniye) majburiy bo‘lib, kamida ikkita maxsus mayoqchali (migalka) mashina hamrohlik qilishi shart.
+Jazo: DEMORGAN - 30 daqiqagacha.
+1.4 Davlat tashkilotlari xodimlariga jinoiy guruhlarning (OPG) titul hududlarida (respa) bo‘lish taqiqlanadi.
+Tushuntirish: OPG titul hududi — bu jinoiy guruh o‘z faolligini eng yuqori darajada ko‘rsatadigan va jinoyatchilar bilan gavjum bo‘lgan joy hisoblanadi. Davlat xodimlari u yerga jiddiy va asosli RP sababsiz kela olmaydilar.
+Jazo: DEMORGAN - 60 daqiqagacha.
+1.5 Davlat tashkiloti xodimlariga qurol va xizmat transportidan shaxsiy maqsadlarda foydalanish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+1.6 Shaxsiy foydalanish, shuningdek sotish yoki saqlash maqsadida tashkilot omborini bo‘shatish (o‘g‘irlash) taqiqlanadi.
+Jazo: BAN - 31 kungacha.
+
+2. HUKUMAT (ПРАВИТЕЛЬСТВО) QOIDALARI
+2.1 Hukumat davlat tashkilotlari uchun tekshiruvlar (proverka) reglamentini belgilash huquqiga ega.
+Aniqlik: Haftasiga ko‘pi bilan 7 ta tekshiruv o‘tkazilishi mumkin, shuningdek, bitta fraksiyani haftasiga 2 martadan ortiq tekshirish taqiqlanadi.
+Jazo: Liderga og‘zaki ogohlantirish.
+2.1.1 Hukumat tekshiruvi davomida biron-bir qonunbuzarlik aniqlansa, tekshiruvchilar o‘sha davlat tashkiloti xodimini ishdan bo‘shatish huquqiga ega.
+Eslatma: Har qanday ishdan bo‘shatish hujjatlashtirilgan bo‘lishi va qonunbuzarlikni isbotlovchi dalillarga (fiksatsiya) ega bo‘lishi shart.
+Jazo: Dalillar bo‘lmagan taqdirda Liderga og‘zaki ogohlantirish.
+2.2 Hukumat mantiqqa va RP qismlariga zid kelmaslik sharti bilan qonunlar/qonun loyihalarini yaratish huquqiga ega.
+Eslatma: Barcha qonunlar davlat tashkilotlarining katta kuratori bilan kelishilgan bo‘lishi shart.
+2.2.1 Hukumat barcha qonunlar va qonun loyihalarini boshqa davlat tashkilotlari rahbarlari yoki o‘sha rahbarlar tomonidan tayinlangan vakillar bilan muhokama qilishi shart (agar qonunlar ushbu davlat tashkilotlarining ish faoliyatiga daxldor bo‘lsa).
+Aniqlik: Shuningdek, ushbu tashkilot kuratori va/yoki davlat tashkilotlari katta kuratorining roziligi ham zarur.
+Jazo: Liderga yozma hayfsan.
+2.3 Hukumat qurol litsenziyalarini berishga majburdir.
+Jazo: Liderga og‘zaki ogohlantirish.
+2.4 Hukumat (zaruriyat tug‘ilganda va boshqa tashkilot rahbarining talabiga binoan) materiallar yetkazib berishni tashkil qilish uchun buyurtma berishga majburdir.
+Jazo: Liderga og‘zaki ogohlantirish.
+2.5 Gubernator o‘z rahbarlik muddati (srok) davomida server o‘yinchilari ishtirokida kamida 1 ta keng ko‘lamli (massoviy) tadbir o‘tkazishi shart.
+Eslatma: Tadbir majburiy ravishda tashkilot kuratori, shuningdek, huquqni muhofaza qilish va sog‘liqni saqlash organlari bilan kelishilgan bo‘lishi kerak.
+Jazo: Liderga yozma hayfsan.
+
+3. SOG‘LIQNI SAQLASH VAZIRLIGI QOIDALARI
+3.1 Sog‘liqni saqlash xodimlari mutlaqo har bir o‘yinchiga tibbiy yordam ko‘rsatishga va tibbiy karta (med karta) berishga majburdirlar.
+Istisno: Agar fuqaro o‘zini o‘ta tajovuzkor (buyno) yoki noadekvat tutsa, xodimlar unga xizmat ko‘rsatishni rad etish huquqiga ega.
+3.2 Bosh shifokor kasalxonaning ichki reglamentini hukumat va tashkilot kuratori bilan kelishgan holda belgilaydi.
+Jazo: Liderga og‘zaki hayfsan.
+3.3 Bosh shifokor davlat tashkilotlarida biror bir kasalliklar bor-yo‘qligini tekshirish huquqiga ega, tekshiruv tashkilotda haftasiga 1 martadan ko‘p bo‘lmasligi kerak.
+Jazo: Liderga og‘zaki hayfsan.
+
+4. HARBIY QISM QOIDALARI
+4.1 Armiya barcha reglament va qonunlarga bo‘ysunadi, shuningdek, boshqa davlat tashkilotlarining harakatlariga qarshilik ko‘rsatish huquqiga ega emas.
+Jazo: Liderga yozma hayfsan.
+4.2 Harbiy xizmatchilarga o‘t ochish qurolini faqat harbiy qism hududidagi favqulodda holatlarda qo‘llashga ruxsat beriladi. Aniqlik: Harbiy xizmatchiga qurolli hujum uyushtirilganda yoki harbiy qism hududiga bostirib kirilganda.
+Jazo: DEMORGAN - 30 daqiqa.
+4.3 Agar materiallar buyurtma qilingan bo‘lsa va portga yetkazilgan bo‘lsa, Harbiy Qism ularni tashib keltirishni (postavka) amalga oshirishga majburdir.
+Eslatma: Materiallar yetkazib berilayotgan fraksiya, harbiy qismning so‘roviga binoan, kuzatuv (soprovojdeniye) uchun yetarli miqdordagi xodimlarni ajratishi shart.
+Jazo: Liderga og‘zaki ogohlantirish.
+4.3.1 O‘q-dorilar (boyepripasi) ortidan borish uchun tuziladigan kolonna majburiy ravishda kamida 2 ta harbiy avtomobildan (kuzatuv mashinasini hisobga olgan holda) iborat bo‘lishi kerak.
+Jazo: Liderga og‘zaki ogohlantirish.
+
+5. POLITSIYA / FSB QOIDALARI
+5.1 Xodimlar fuqarolarni faqatgina biron-bir huquqbuzarlik sodir etilgan taqdirdagina ushlab turish (zaderjat) huquqiga egadirlar.
+Jazo: WARN.
+5.2 Otishma yoki hibsga olish jarayonida o‘lib, kasalxonaga tushib qolgan o‘yinchini borib qayta hibsga olish (povtorniy arest) taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqaga.
+5.3 Xodimlarga hech qanday RP sababsiz qidiruv (rozisk) e'lon qilish, jarima solish, shuningdek, o‘zini nomunosib tutish taqiqlanadi.
+Jazo: WARN.
+5.3.1 Xodimlarga RP sababsiz va video dalillarsiz (fiksatsiya) o‘yinchilarning litsenziyalarini olib qo‘yish taqiqlanadi.
+Jazo: WARN.
+5.4 FSB xodimlari, agar o‘sha vaqtda o‘zlarining to‘g‘ridan-to‘g‘ri majburiyatlarini (vnedreniye - ichki guruhlarga kirish, davlat tuzilmalarini tekshirish va h.k.) bajarishayotgan bo‘lsa, ba'zi umumiy tadbirlarda ishtirok etmaslik huquqiga egadirlar.
+5.5 FSB xodimlariga niqoblanish kiyimlaridan (maskirovka) shaxsiy maqsadlarda foydalanish, shuningdek, kuch ishlatar tuzilmalar xodimlarini asossiz ravishda ishdan bo‘shatish taqiqlanadi.
+Jazo: WARN.
+5.6 Xodimlarga o‘g‘irlangan avtomobillar topshiriladigan joyda jinoiy guruh a'zolarini ular haqiqatda aniqlanmasidan oldin kutib turish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqa.
+
+6. YANGILIKLAR TARMOG‘I QOIDALARI
+6.1 Direktor fraksiyaning ichki reglamentini belgilaydi va uni albatta tashkilot kuratori bilan kelishib oladi.
+Jazo: Liderga og‘zaki ogohlantirish.
+6.2 Efirga yangiliklarni (reklama, tadbirlar) uzatish oralig‘i (interval) — 10 minut bo‘lishi shart. Shoshilinch (ekstrennie) xabarlar bundan mustasno.
+Jazo: MUTE - 30 daqiqagacha.
+6.3 E'lonlarni noadekvat tahrirlash, efirda taqiqlangan mavzularga daxl qilish, shuningdek, har qanday OOC (o‘yin tashqarisi) ma'lumotlaridan foydalanish taqiqlanadi.
+Aniqlik: Bu PRO (E'lon tahrirlash qoidalari) va PPE (Efir o‘tkazish qoidalari) qoidalarini buzish hisoblanadi.
+Eslatma: Taqiqlangan mavzular deganda — hatto yashirin ko‘rinishda bo‘lsa ham so‘kinish so‘zlarni ishlatish, jargon (sleng) iboralar, jinoiy xarakterdagi harakatlarni muhokama qilish, shuningdek, o‘yin jarayoniga daxldor bo‘lmagan har qanday siyosiy harakatlarni muhokama qilish tushuniladi.
+Jazo: WARN; qo‘pol ravishda buzilganda — qahramonni (personaj) 3 kungacha bloklash.
+6.4 Yangiliklar tarmog‘i haftasiga o‘yinchilar uchun kamida 1 ta tadbir (meropriyatiye) o‘tkazishi shart.
+Jazo: Liderga og‘zaki ogohlantirish; qo‘pol qonunbuzarlikda — Liderga yozma hayfsan.
+6.5 Yangiliklar tarmog‘i haftasiga kamida 4 marta ko‘ngilochar xarakterdagi efirlarni o‘tkazishga majburdir.
+Jazo: Liderga og‘zaki ogohlantirish; qo‘pol qonunbuzarlikda — Liderga yozma hayfsan.
+
+VI. DAVLAT TO‘LQINI VA DEPARTAMENT QO‘SHMA QOIDALARI
+
+1. DAVLAT TO‘LQINI QOIDALARI
+1.1 Davlat to‘lqiniga e'lon berishdan oldin, lider yoki uning o‘rinbosari maxsus kanalda belgilangan shaklda (Fraksiya | Vaqt | Satrlar soni) hisobot qoldirishi shart.
+Eslatma: Ketma-ket 2 marta navbat olish taqiqlanadi.
+1.2 Barcha fraksiyalar uchun davlat yangiliklarini uzatish oralig‘i (interval) — 10 minut.
+Jazo: MUTE - 20 daqiqagacha.
+1.3 Davlat to‘lqini konferensiyasidagi xabarlarni tahrirlash yoki o‘chirish taqiqlanadi.
+1.4 Davlat to‘lqinini 1 soatdan ko‘proq vaqtga oldindan band qilish taqiqlanadi.
+Eslatma: Umumiy chatga e'lon berishdan kamida 10 daqiqa oldin davlat to‘lqinini band qilish kerak.
+1.5 To‘lqindan shaxsiy maqsadlarda foydalanish (bizneslarni reklama qilish, biror narsani sotish, tashviqot qilish va h.k.) taqiqlanadi.
+Jazo: MUTE - 60 daqiqagacha | BAN - 31 kungacha.
+Eslatma: Davlat to‘lqinida noadekvat xulq-atvor, haqoratlar, shuningdek, MG qilish mutlaqo taqiqlanadi.
+1.6 Lider/o‘rinbosar davlat to‘lqinini band qilish va undan foydalanish vaqtida departament chatiga xabar berishi shart.
+Jazo: MUTE - 20 daqiqagacha.
+Misol:
+[OBV] to [ALL]: Soat 19:00 dagi davlat to‘lqini bandmi?
+[OBV] to [ALL]: Hech qanday javob eshitmaganim sababli, soat 19:00 dagi davlat to‘lqinini band qilyapman.
+[OBV] to [ALL]: Davlat to‘lqinini band qilyapman.
+
+2. DEPARTAMENT CHATIDA RUXSAT ETILGAN HOLATLAR
+2.1 Tashkilot hayotidagi muhim voqealar haqida xabar berish.
+2.2 Davlat to‘lqini band qilinganligi yoki bo‘shaganligi haqida ma'lum qilish.
+2.3 Boshqa tashkilotlarga biron-bir masalada yordam so‘rab murojaat qilish.
+Misol: [SSV-A] to [IIV-A]: Huquqbuzarni hibsga olish uchun biz tomonga xodimlarni jo‘nating.
+2.4 Boshqa tashkilotga murojaat qilganda albatta teglar (tegi) ishlatilishi shart.
+Misol: [DXX] to [IIV-J]: Aloqaga.
+Jazo: Ommaviy qoida buzilishlarida liderga og‘zaki ogohlantirish.
+
+3. DEPARTAMENT CHATIDA TAQIQLANGAN HOLATLAR
+3.1 Mavzudan tashqari (offtop) xabarlar yozish.
+Jazo: MUTE - 20 daqiqagacha.
+3.2 Biror narsani sotib olish/sotish haqida xabarlar yozish.
+Jazo: MUTE - 30 daqiqagacha.
+3.3 Haqorat qilish, so‘kinish, noadekvat o‘zini tutish.
+Jazo: MUTE - 30 daqiqagacha.
+3.4 Nimadir reklama qilish.
+Jazo: MUTE - 60 daqiqagacha.
+3.5 5-rangdan past bo‘lgan xodimlarga yozish taqiqlanadi.
+Jazo: IC jazo sifatida ishdan bo‘shatish (uvolneniye).
+Eslatma: Ommaviy qoida buzilishlari sodir bo‘lsa, tashkilot lideri chatga kirish huquqini o‘z xohishiga ko‘ra cheklashga haqli.
+
+4. TASHKILOT TEGLARI
+[All] - Barcha davlat tashkilotlari (Все государственные организации).
+[OBV] - Hukumat (Правительство).
+[DXX] - Federal Xavfsizlik Xizmati (Федеральная Служба Безопасности).
+[IIV-A] - Arzamash shahri Politsiyasi (Полиция г. Арзамас).
+[IIV-J] - Yujniy shahri Politsiyasi (Полиция г. Южный).
+[SSV-A] - Arzamash shahri Kasalxonasi (Больница г. Арзамас).
+[SSV-J] - Yujniy shahri Kasalxonasi (Больница г. Южный).
+[HQ] - Harbiy Qism (Воинская Часть).
+
+VII. OILAVIY TADBIRLAR (FAMILY WAR) QOIDALARI
+
+1.1 O‘yin qoidalarini buzish, shuningdek, har qanday baglar, softlar (chitlar, skriptlar) va boshqa uchinchi tomon dasturlaridan foydalanish taqiqlanadi.
+Jazo: Amaldagi server qoidalariga muvofiq jazo.
+1.2 Daryo bo‘yidagi kranlarning ustiga chiqib olish taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqagacha.
+1.3 Lokatsiyaga kirish joylarida avtomobillar yordamida to‘siqlar (barrika) hosil qilish taqiqlanadi.
+Jazo: Avtomobillarni SPAWN qilish | DEMORGAN - 30 daqiqagacha.
+1.4 Do‘konda sotiladigan barcha turdagi qurollardan foydalanishga ruxsat beriladi.
+Jazo: (taqiqlangan qurol ishlatsa) DEMORGAN - 30 daqiqagacha.
+1.5 O‘limdan har qanday usul bilan qochish (o‘yindan chiqish, AFK bo‘lish, otishma taqiqlangan zonalarga/kirish joylariga qochish) taqiqlanadi.
+Jazo: WARN.
+1.6 Tashlab ketilgan port (заброшенный порт) hududida RK (qayta kelish) qilish taqiqlanadi.
+Jazo: WARN.
+Aniqlik: Asosiy akkountda o‘lgandan keyin boshqa akkount (tvink) orqali FWda qatnashish ham taqiqlanadi.
+1.7 Port hududidan tashqariga chiqish taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqagacha.
+1.7.1 Portga kirish joyida poylab turish (kemperlik qilish) va boshqa oila a'zolarini hududga qo‘ymaslik taqiqlanadi. Ishtirokchilarni hududdan tashqarida otish mutlaqo taqiqlanadi.
+Jazo: WARN.
+1.8 O‘yin qulagandan (krash) yoki internet uzilgandan keyin, o‘yindan chiqqan joyning o‘zida qayta paydo bo‘lish taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqaga.
+Aniqlik: Agar o‘yin qulagandan keyin qayta kirganda chiqib ketgan joyingizda paydo bo‘lmasangiz, baribir Family Warga qaytib kelish taqiqlanadi.
+1.9 Tadbir davomida niqob (maska) ishlatish taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqagacha.
+1.10 Boshqa oilalar bilan birlashish (ittifoq tuzish) taqiqlanadi.
+Jazo: Barcha ishtirokchilarga WARN.
+1.11 Oila tadbir tizimli boshlangunga qadar faqat bitta boshlang‘ich pozitsiyani egallashi mumkin.
+Jazo: DEMORGAN - 30 daqiqagacha.
+1.12 Sog‘liqni tiklash vositalaridan (aptechka/eda) foydalanish jarayoni to‘liq pana joyda (ukritiye) bo‘lishi shart.
+Jazo: DEMORGAN - 30 daqiqagacha.
+Eslatma: Animatsiya boshlanganidan to tugaguncha pana joyda turish kerak.
+1.13 Har qanday usul bilan animatsiyalarni uzib qo‘yish (сбивать) yoki qisqartirish taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqaga.
+1.14 Tadbir o‘tkazilayotgan hududga faqat piyoda kirishga ruxsat beriladi, har qanday transport vositasidan foydalanish taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqagacha.
+Eslatma: Hududga mavjud bo‘lgan uchta kirish joyidan kirishga ruxsat beriladi.
+1.15 Jetpak, shar va boshqa uchuvchi vositalardan foydalanish taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqaga.
+1.16 Tadbir davomida 30 soniyadan ortiq AFK rejimida turish taqiqlanadi.
+Jazo: KICK.
+1.17 O‘z oilasi a'zolarini o‘ldirish yoki ularga zarar yetkazish (TK) taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqa | Ommaviy qoida buzilishida - WARN.
+1.18 Boshqa o‘yinchilardan ustunlik beradigan skinlarni (kiyimlar) kiyish taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqa.
+Aniqlik: Xasbik, Chaki, Rais, Raketa, Sonik, konkili skinlar va h.k.
+1.19 O‘limlar sonini soxta ko‘paytirish (накрутка убийств) taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqaga.
+Aniqlik: Hududda o‘ldirish maqsadida atayin har qanday davlat xizmatlarini (tez yordam, militsiya) chaqirish taqiqlanadi, shuningdek, oila a'zolarini atayin o‘ldirish ham bura kiradi.
+1.20 Oilaviy urushlar boshlanganidan keyin 40-daqiqadan so‘ng (tadbir oxirida) hududga kirish yoki mashinada kirish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqaga.
+1.21 Tadbirda 5-darajadan (lvl) past bo‘lgan o‘yinchilarning qatnashishi taqiqlanadi.
+Jazo: SPAWN | Qayta takrorlansa DEMORGAN - 30 daqiqaga.
+1.22 Tadbir boshlanishidan oldin boshqa oila ishtirokchilarini o‘ldirish yoki zarar yetkazish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqaga.
+1.23 Tadbirda bronijiletlardan foydalanish taqiqlanadi.
+Jazo: SPAWN.
+1.24 Agar oilangiz tadbirdan chetlashtirilgan bo‘lsa, tadbir hududiga kelish taqiqlanadi.
+Jazo: SPAWN | Keyingi qoida buzilishlarida DEMORGAN - 30 daqiqagacha.
+Eslatma: Qoidalarni qayta-qayta buzganligi uchun oila 3 kundan 14 kungacha tadbirlardan chetlashtirilishi mumkin.
+1.25 Qizil zonada turib yoki qizil zonadagi o‘yinchilarga zarar yetkazish taqiqlanadi.
+Jazo: WARN.
+1-sonli eslatma: Qizil zona — konteynerlar liniyasigacha bo‘lgan urush o‘tkaziladigan joyga kiradigan uchta kirish joyi hududidir.
+2-sonli eslatma: Qizil zonaning chizmasi serverning rasmiy Discord kanalida joylashtirilgan.
+
+VIII. OPG (JINOIY GURUHLAR) UCHUN QOIDALAR
+
+1. UMUMIY QOIDALAR
+1.1 OPG — bu jinoyat sodir etish maqsadida birlashgan odamlarning uyushgan jinoiy guruhidir. Boshqaruv bilan lider va uning o‘rinbosarlari shug‘ullanadi.
+1.2 Bizneslar sohasida barcha OPGlar o‘z statuslari uchun kurashda o‘zaro raqib hisoblanadi.
+1.3 Muzlatish (zamorozka) vaqtida fraksiya faollik ko‘rsatishi mumkin emas.
+Jazo: Tashkilot tarkibini tarqatib yuborish (Расформирование).
+Aniqlik: Tashkilot jinoiy guruh a'zosi sifatida bizneslarni bosib olishni boshlay olmaydi va RP vaziyatlarda ishtirok eta olmaydi.
+1.4 Jinoiy tashkilotlarda ranglarni (rang) real yoki o‘yin valyutasiga sotish taqiqlanadi.
+Jazo: BAN - 30 kundan to butunlay BANgacha.
+1.5 Tashkilot omborini qasddan bo‘shatish/o‘g‘irlash (сливать склад) taqiqlanadi.
+Jazo: BAN - 30 kungacha.
+Aniqlik: Ombordan juda ko‘p, ya'ni ruxsat etilganidan ortiq resurslarni olish.
+1.6 Boshqa OPG hududida yoki uning yaqinida har qanday provokatsiya yoki agressiv harakatlar qilish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+
+2. OPG TITUL HUDUDLARI (RESPA)
+2.1 OPGning titul hududi deb, jinoiy guruh o‘z faoliyatini eng yuqori darajada ko‘rsatadigan (paydo bo‘ladigan) joyga aytiladi.
+2.2 OPG a'zolariga qarshi ularning titul hududida agressiv harakatlar qilish taqiqlanadi.
+Jazo: WARN.
+2.3 Boshqa OPGning titul hududida bo‘lganingizda, ushbu hududga egalik qiluvchi odamlarning barcha talablarini bajarishingiz shart.
+Jazo: DEMORGAN - 60 daqiqagacha.
+2.4 Ta'qibdan (pogoni) yoki otishmadan qochib o‘z OPGngizning titul hududiga kirib ketish taqiqlanadi.
+Jazo: WARN.
+2.5 O‘yinchilarni tashkilotga qabul qilishni faqatgina titul hududida amalga oshirish mumkin.
+Jazo: Liderga og‘zaki ogohlantirish.
+
+3. OPG DIPLOMATIYASI
+3.1 Diplomatiya — bu ikki jinoiy guruh o‘rtasidagi neytralitet (neytral) yoki dushmanlik haqidagi kelishuvdir.
+3.2 Diplomatik munosabatlarni faqat lider yoki uning o‘rinbosari o‘zgartirishi mumkin.
+Jazo: Liderga og‘zaki ogohlantirish.
+3.3 Diplomatiya munosabatlarini o‘rnatish majburiy ravishda tegishli otigrovkalar bilan RP yo‘li orqali o‘tishi shart.
+Jazo: Liderga og‘zaki ogohlantirish.
+3.4 Faqat bitta jinoiy guruh bilan ittifoq (soyuz) tuzishga ruxsat beriladi.
+Jazo: Liderga yozma hayfsan.
+3.5 Boshqa jinoiy tashkilotga urush e'lon qilish yoki ittifoq tuzish uchun lider qarshi tomonning titul hududiga kelishi va muloqot (dialog) orqali tinchlik haqida kelishishi yoki urush e'lon qilishi kerak.
+Jazo: Liderga yozma hayfsan.
+Diplomatiya qanday o‘tkaziladi:
+- Liderlar qo‘ng‘iroqlashib, uchrashuv belgilashlari kerak. Uchrashuv joyi tomonlardan birining hovlisi (osobnyak) bo‘lishi lozim.
+- Liderlar ko‘rsatilgan joyda va belgilangan vaqtda uchrashib, dialogni boshlaydilar.
+- Muloqotda urush boshlanishiga yoki ittifoq tuzilishiga sabab bo‘lgan aniq vaj bo‘lishi shart.
+- Agar uchrashuv muvaffaqiyatli o‘tsa va jinoiy guruhlar ittifoqni qo‘llab-quvvatlashga qaror qilsa, ular RolePlay kelishuvini imzolaydilar, qo‘l berib ko‘rishadilar va uchrashuvni yakunlaydilar.
+- Agar muloqot davomida urush boshlashga qaror qilinsa, ular provokatsiya va haqoratlarsiz xayrlashadilar va uchrashuvni yakunlaydilar.
+- Agar uchrashuv biron bir sababga ko‘ra buzilsa, jinoiy guruhlar tinchgina tarqalishlari va diplomatiyani keyin hal qilishlari kerak.
+3.6 Lider yoki o‘rinbosarda diplomatiya imzolanganligi haqida foto/video dalil (fiksatsiya) bo‘lishi shart.
+Jazo: Liderga og‘zaki ogohlantirish.
+3.7 Ikkinchi tomonning liderini va tashkilot kuratorlarini ogohlantirmasdan diplomatiyani o‘zgartirish taqiqlanadi.
+Jazo: Liderga yozma hayfsan.
+
+4. OPG QORA BOZORI (ЧЕРНЫЙ РЫНОК)
+4.1 Qora bozor va unga tutash yo‘llar neytral hudud hisoblanadi, u yerda o‘yinchilar o‘rtasida har qanday agressiya, otishma va zo‘ravonlik mutlaqo taqiqlanadi.
+Jazo: WARN.
+4.2 Otishma, ta'qib (pogoni) yoki tunash (ogrableniye) vaqtida qora bozor hududiga qochib kirish taqiqlanadi.
+Jazo: WARN.
+
+IX. BIZNES UCHUN URUSH (BIZWAR) QOIDALARI
+
+1. UMUMIY QOIDALAR
+1.1 Lider o‘z faoliyat muddati (srok) boshida urushlardan 24 soatga bir marta muzlatish (zamorozka) olish huquqiga ega.
+Eslatma: Agar lider lavozimga tayinlanganda muzlatishdan bosh tortgan bo‘lsa, uni keyinchalik o‘z muddati davomida olishi mumkin.
+1.1.1 Muzlatish (moroz) vaqtida urush e'lon qilish (забивать стрелу) taqiqlanadi.
+Jazo: Og‘zaki ogohlantirish + otkat va hujum imkoniyatini yo‘qotish.
+1.2 Urushlar lider yoki uning o‘rinbosari tomonidan OOC yo‘li bilan, rasmiy Discord kanaldagi tashkilot bo‘limida belgilangan shablon bo‘yicha e'lon qilinadi.
+1.2.1 Hujum qilayotgan tomon urush natijalari haqida taymer tugaganidan keyin 15 daqiqa ichida BIZWAR kanalida hisobot berishi shart.
+Jazo: Liderga og‘zaki ogohlantirish.
+1.2.2 Urushni boshqa vaqtga ko‘chirish mumkin bo‘lgan maksimal vaqt — 15 daqiqa.
+Jazo: Liderga og‘zaki ogohlantirish.
+1.3 Har bir OPG kuniga ko‘pi bilan 3 ta hujum va 3 ta mudofaa o‘tkazishi mumkin.
+Aniqlik: Yakshanba kunlari — ko‘pi bilan 2 ta hujum va 2 ta mudofaa.
+1.3.1 Ikki OPG o‘zaro o‘rtasida 2 tadan ko‘p hujum va 2 tadan ko‘p mudofaa o‘tkazishi mumkin emas.
+Jazo: Liderga og‘zaki ogohlantirish.
+1.3.2 Global tadbirlar (gmp) boshlanishiga bir soat qolganda urush e'lon qilish taqiqlanadi.
+Jazo: Hujum bekor bo‘ladi, liderga og‘zaki ogohlantirish.
+Istisno: Global tadbirda qatnashmayotgan OPGlar o‘zaro urush e'lon qilishlari mumkin.
+1.3.3 CC chatida o‘zaro rozilik bilan urush (BV) o‘tkazishga ruxsat beriladi. Boshqa OPGlar 10 daqiqa ichida o‘sha soatga qayta urush e'lon qilib (перебить), o‘zaro kelishilgan BVni bekor qilishi mumkin.
+1.3.4 O‘zaro roziliksiz va kuratorning ruxsatisiz urush shartlarini o‘zgartirish taqiqlanadi.
+Jazo: Liderga og‘zaki ogohlantirish, hujum imkoniyatini yo‘qotish, biznesning qaytarilishi (otkat).
+Eslatma: Agar maxsus ochilgan kanalda urush shartlari e'lon qilingan bo‘lsa, shartlar yozilgan xabarni tahrirlash (redaktoring) taqiqlanadi.
+1.4 Ish kunlari urushlarga Moskva vaqti (MSK) bilan soat 14:00 dan 23:00 gacha, dam olish kunlari esa 12:00 dan 23:00 gacha ruxsat beriladi.
+Jazo: Liderga og‘zaki ogohlantirish.
+1.5 Har ikki OPG ishtirokchilarning to‘liq tarkibi bilan muloqot (RP-dialog) olib borishi shart. Hujum qilayotgan tomon urush boshlanish vaqtini belgilaydi, mudofaa qilayotgan tomon esa joyni (tomonni) tanlaydi. Muloqot faqat ushbu shartlar kelishilgandan keyingina yakunlanadi.
+Eslatma: Agar jadval bo‘yicha soat 11:00 gacha kelishuvga erishilmasa, muzokarani buzgan tomon mag‘lub bo‘lgan deb hisoblanadi va lider og‘zaki ogohlantirish oladi.
+1.5.1 Otishma RP-dialog tugaganidan keyin kamida 1 daqiqa o‘tgach va ko‘pi bilan 2 daqiqa ichida boshlanishi kerak.
+Jazo: Og‘zaki ogohlantirish.
+1.6 Lokatsiyalarda ruxsat etilgan ishtirokchilar soni:
+1-sonli eslatma: Lesopilka (Yog‘ochsozlik) — minimum 6, maksimum 15 kishi.
+2-sonli eslatma: Svalka (Axlatxona) — minimum 10, maksimum 30 kishi.
+Istisno: Liderlarning o‘zaro roziligi bilan sondan oshib ketishga ruxsat beriladi.
+1.7 Har bir OPG haftasiga kamida 1 marta Svalka lokatsiyasida hujum o‘tkazishi shart.
+Jazo: Liderga yozma hayfsan.
+1.8 Bizwar o‘tkazilayotgan hududda begona (tashqaridagi) o‘yinchilarning bo‘lishi taqiqlanadi.
+Jazo: SPAWN | KICK.
+1.9 Davlat tashkiloti xodimlariga bizwarga bir soatdan kam vaqt qolganda OPGga qarshi reydlar uyushtirish taqiqlanadi.
+Jazo: Liderga og‘zaki ogohlantirish.
+1.10 Ishtirokchilarning minimal o‘yin darajasi (lvl) — 7 bo‘lishi kerak.
+Jazo: DEMORGAN - 30 daqiqagacha | 3 tadan ko‘p ishtirokchi bo‘lsa - biznes otkat qilinadi + liderga og‘zaki ogohlantirish.
+1.11 Agar jadval bo‘yicha 12:30 gacha yetib kelinmasa, kelmagan (неприезд) deb hisoblanadi.
+Jazo: Liderga og‘zaki ogohlantirish, 2 tadan ko‘p o‘yinchi qoidani buzsa - 1 ta biznesni berish va BWni bekor qilish.
+Aniqlik: Agar OPG hali RP-dialog uchun safga turmagan bo‘lsa, u hali kelmagan deb hisoblanadi.
+Istisno: Server tomonidan texnik nosozliklar bo‘lsa.
+Eslatma: Agar hujum qilayotgan tomondan 2 dan ortiq ishtirokchi kelmasa, hujum kuyadi; agar mudofaa tomondan kelishmasa, hujum muvaffaqiyatli deb hisoblanadi.
+1.12 Katta kurator/Kurator yordamchisi va server rahbariyati vaziyatga qarab, qoidalarga qat’iy tayanmagan holda jazo berishi yoki qayta o‘yin (pereigrovka)/biznes otkatini tayinlashi mumkin.
+1.13 Urush e'lon qilish shartlarini buzish taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqa + liderga og‘zaki ogohlantirish.
+1.14 Urushni boshlanishidan kamida 60 daqiqa oldin va ko‘pi bilan 30 daqiqa qolganda e'lon qilish kerak.
+Jazo: Urush bekor qilinadi + hujum imkoniyati yo‘qoladi + liderga og‘zaki ogohlantirish.
+
+2. BIZNES UCHUN URUSH O‘TKAZILADIGAN HUDUDDAGI QOIDALAR
+2.1 O‘lgandan keyin urushga qayta qaytish (RK) taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqa, biznesni qaytarish (otkat) + liderga og‘zaki ogohlantirish.
+2.2 Urush hududini tark etish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqa | 3 tadan ko‘p ishtirokchi bo‘lsa - biznes otkati, liderga og‘zaki ogohlantirish.
+2.2.1 Urush vaqtida o‘yindan qasddan chiqib ketish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqa | 3 tadan ko‘p ishtirokchi bo‘lsa - biznes otkati, liderga og‘zaki ogohlantirish.
+Eslatma: Kutilmagan sabab bilan o‘yindan chiqib ketganda (вылет), chiqib ketgan joyga qayta kirish taqiqlanadi.
+2.3 Balandliklar va pastliklarda (tepalik va chuqurliklarda) turish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqa | 3 tadan ko‘p ishtirokchi bo‘lsa - biznes otkati, liderga og‘zaki ogohlantirish.
+2.3.1 Agar urush shartlarida (zabivda) ko‘rsatilmagan bo‘lsa, devordan sakrab o‘tish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+2.4 Tadbir boshlanishidan oldin agressiv/provokatsion harakatlar qilish taqiqlanadi.
+Jazo: WARN.
+Istisno: Biznes urushi ishtirokchilari tomonidan qasddan qilingan provokatsiya.
+2.5 Tarkibni transfer qilish (tarkibni boshqa jamoaga o‘tkazish) taqiqlanadi.
+Jazo: Transferning barcha ishtirokchilariga WARN + biznes otkati.
+Eslatma: Transfer — 3 yoki undan ko‘p ishtirokchining 2 kun ichida eski guruhiga qaytish sharti bilan boshqa OPGga o‘tishi yoki OPGsini o‘zgartirishi.
+2.6 Qizil kvadrat hududidan tashqarida o‘yinchi o‘ldirish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqa | 3 tadan ko‘p ishtirokchi bo‘lsa - biznes otkati, liderga og‘zaki ogohlantirish.
+2.7 Urush ishtirokchilariga transport vositasida qizil kvadrat ichiga kirish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+2.8 Bronijiletlar va snayper miltig‘idan (снайперская винтовка) foydalanish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+2.9 Soft (notonish dasturlar), skriptlar, chitlar, baglar va o‘yin xatoliklaridan foydalanish taqiqlanadi.
+Jazo: WARN | BAN 3 kundan 31 kungacha + biznes otkati + liderga yozma hayfsan.
+2.10 Jang vaqtida sog‘liqni tiklaydigan har qanday vositadan (aptechka/eda) foydalanish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+Eslatma: Faqat pana joyda (ukritiye) foydalanishga ruxsat beriladi.
+2.11 Har qanday usul bilan animatsiyalarni uzib qo‘yish (сбивать) yoki qisqartirish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+
+3. MULTIMEDIA (FRAPS/VIDEO) QOIDALARI
+3.1 Har bir ishtirokchi urush boshlangan (RP-dialog boshlangan) vaqtdan boshlab, oxirgi o‘limga qadar bo‘lgan jarayonni 2 kun davomida video tasasmda (videofiksatsiya) saqlashi shart.
+Jazo: WARN / BAN | biznes otkati.
+Aniqlik: Minimal video ruxsati — 480p bo‘lishi kerak.
+3.2 Kuratorlar urush tugaganidan keyin 48 soat ichida o‘yinchidan rad etish/isbot videosini (опровержение) so‘rashlari mumkin.
+3.3 Kurator talabiga ko‘ra, o‘yinchi 24 soat ichida frapsni (videoni) taqdim etishi shart.
+Jazo: BAN - 31 kungacha | Biznes otkati.
+3.4 O‘zidan video (fraps) so‘ralgan o‘yinchi, videoni taqdim etmaguniga qadar keyingi biznes urushlarida (bizwar) qatnashish huquqiga ega emas.
+Jazo: Liderga og‘zaki ogohlantirish.
+
+X. FURGON UCHUN JANG QOIDALARI
+1.1 Tashkilot furgonni faqatgina hududda faqat bitta jinoiy guruh (OPG) a'zolari qolgan taqdirdagina olib ketish huquqiga ega.
+Jazo: Barcha ishtirokchilarga DEMORGAN - 60 daqiqagacha.
+Eslatma: Furgon paydo bo‘ladigan (turadigan) joyda qasddan qarab turish taqiqlanadi.
+1.2 OPG a'zolari tadbir tizimli ravishda boshlanishidan 5 daqiqa oldin yetib kelishlari shart.
+Jazo: OPG diskvalifikatsiyasi.
+Eslatma: 55-daqiqadan keyin kirish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+1.3 Tadbir boshlangunga qadar raqib OPG tomonga har qanday agressiya ko‘rsatish taqiqlanadi.
+Jazo: MUTE - 60 daqiqagacha | 2 tadan ko‘p qoida buzilishi - OPG diskvalifikatsiyasi.
+1.4 Port hududida dushman OPG vakillarini "so‘z bilan gijgijlash" (словесный байт) taqiqlanadi.
+Jazo: MUTE - 60 daqiqagacha | DEMORGAN - 60 daqiqagacha.
+1.5 Bir OPG tomonidan ishtirok etadigan odamlarning minimal soni — 10 ta.
+Jazo: OPG diskvalifikatsiyasi.
+1.5.1 Bir OPG tomonidan ishtirok etadigan odamlarning maksimal soni — cheklanmagan.
+1.6 Tadbir davomida avtomobillarda yurish taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqagacha.
+1.7 Tashkilot omboridan olingan bronijiletlardan foydalanishga ruxsat beriladi.
+1.8 OPG omboridan olingan barcha turdagi qurollardan foydalanishga ruxsat beriladi.
+Jazo: DEMORGAN - 60 daqiqagacha (qurol bo‘lmagan boshqa vositalar ishlatsa).
+1.9 Tadbirda RK (Revenge Kill - o‘lgandan keyin yana qaytib kelish) taqiqlanadi.
+Jazo: WARN.
+1.10 Tadbir hududidan tashqariga chiqish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+1.11 O‘yin qulaganda (krash) yoki internet uzilganda, qayta kirganda o‘yinni tark etgan joyga qayta paydo bo‘lish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+Istisno: Agar tadbir tizimli ravishda boshlanmagan bo‘lsa.
+1.12 Qurolni qayta o‘qlash (perezaryadka) va aptechka animatsiyalarini har qanday usul bilan uzib qo‘yish (сбивать анимацию) taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+1.13 Tadbir davomida niqob (maska) taqish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+1.14 Boshqa OPGlar bilan ittifoqingiz (soyuz) bo‘lsa ham, ular bilan birlashish taqiqlanadi.
+Jazo: Liderga yozma hayfsan + OPG diskvalifikatsiyasi.
+1.15 Tadbir boshlanishidan oldin o‘t ochish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+1.16 Tadbir boshlangandan keyin AFK rejimida 30 soniyadan ko‘p turish taqiqlanadi.
+Jazo: KICK | SPAWN.
+1.17 Tadbir tizimli ravishda boshlangunga qadar siz egallab turgan hududni tark etish taqiqlanadi.
+Jazo: DEMORGAN - 30 daqiqagacha.
+1.18 Tadbir ishtirokchilariga har qanday turda xalaqit berish yoki agressiya ko‘rsatish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+1.19 Tadbir o‘tkazilayotgan hududga ishtirokchi bo‘lmagan begona shaxslarning kirishi taqiqlanadi.
+Jazo: SPAWN.
+1.20 Tadbir hududiga faqat asosiy kirish joyidan kirishga ruxsat beriladi.
+Jazo: SPAWN | Qayta takrorlansa, liderga og‘zaki ogohlantirish.
+Eslatma: Tashkilot avtomobillarini tadbir hududi devorining tashqarisida qoldirish shart.
+1.21 Furgonni olib ketayotgan (tashiyotgan) o‘yinchilarga xalaqit berish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+1.22 Siz egallagan hududdan tadbir boshlanishidan oldin safdan chiqib ketish taqiqlanadi.
+Jazo: SPAWN.
+Istisno: 9-10 ranglar.
+1.23 Foydalanish imkoniyati mavjud bo‘lgan aksessuarlarni (masalan: shar, djet-pak) ishlatish taqiqlanadi.
+Jazo: DEMORGAN - 60 daqiqagacha.
+
+XI. RP ATAMALARI VA ULARNING TAVSIFI
+
+RolePlay (qisqartmasi RP) — rolli o‘yin rejimi bo‘lib, unda har bir o‘yinchi o‘z personaji uchun o‘ylab topilgan shaxsiy rolni o‘ynaydi.
+In Character (qisqartmasi IC) — RolePlay jarayoniga taalluqli ma'lumot. O‘yin personajlari nomidan to‘g‘ridan-to‘g‘ri aytiladigan yoki ishlatiladigan ma'lumotlar.
+Out Of Character (qisqartmasi OOC) — RolePlay jarayoniga daxli bo‘lmagan ma'lumot. O‘yinchi shaxsiyatidan kelib chiqib gapiriladigan yoki ishlatiladigan ma'lumotlar.
+MetaGaming (qisqartmasi MG) — IC ichida OOC ma'lumotlardan foydalanish (jumladan, ovozli chatda ham). Personajingiz o‘yin ichida umuman bilishi mumkin bo‘lmagan ma'lumotni unga ma'lum qilish.
+Jazo: MUTE - 15 daqiqagacha.
+Non Role-Play (qisqartmasi NonRP) — real hayotdagi odamlarning xulq-atvoriga zid bo‘lgan harakatlar. RP rejimini buzish.
+Jazo: DEMORGAN - 30 daqiqagacha.
+PowerGaming (qisqartmasi PG) — o‘zini superqahramon deb tasavvur qilish. Personajning jismoniy imkoniyatlarini oshirib ko‘rsatish. Masalan: 3 yoki undan ko‘p kishiga qarshi yolg‘iz o‘zi chiqish, qurollangan odamga musht bilan hujum qilish.
+Jazo: DEMORGAN - 30 daqiqagacha.
+DeathMatch (qisqartmasi DM) — asossiz RP sababsiz qasddan o‘ldirish yoki o‘ldirishga urinish.
+Jazo: DEMORGAN - 30 daqiqadan 60 daqiqagacha.
+Massive DeathMatch (qisqartmasi Mass DM) — RP sababsiz o‘yinchilarni ommaviy ravishda o‘ldirish/o‘ldirishga urinish.
+Jazo: WARN.
+Massive DeathMatch GreenZone (qisqacha Mass DM GZ) — Yashil Zonada (Green Zone) o‘yinchilarni ommaviy o‘ldirish/o‘ldirishga urinish.
+Jazo: DEMORGAN - 90 daqiqagacha + WARN | Qoidabuzarlik takrorlansa - Personajni 3 kungacha bloklash.
+DriveBy (qisqacha DB) — transport vositasi (T/V) rulida turib o‘ldirish/o‘ldirishga urinish, shuningdek, jiddiy IC sabablarsiz boshqa T/Vni qasddan urib poylash (taran qilish).
+Jazo: DEMORGAN - 30 daqiqagacha.
+Spawn Kill (qisqacha SK) — personajlarni ularning paydo bo‘lish (spawn) joyida o‘ldirish/o‘ldirishga urinish.
+Jazo: DEMORGAN - 60 dan 120 daqiqagacha.
+Massive Spawn Kill (qisqacha Mass SK) — personajlarni ularning paydo bo‘lish joyida ommaviy o‘ldirish/o‘ldirishga urinish.
+Jazo: WARN | Qoidabuzarlik takrorlansa - Personajni 3 kungacha bloklash.
+Revenge Kill (qisqacha RK) — o‘yinchini o‘ch olish maqsadida o‘ldirish (u sizni o‘ldirganidan so‘ng darhol). O‘yin personajidan qat'i nazar, 20 daqiqa ichida o‘zi o‘lgan joyga qaytib kelish.
+Jazo: DEMORGAN - 30 daqiqagacha.
+Eslatma: o‘lim joyiga qo‘shimcha (tvinok) personaj bilan qaytish ham taqiqlanadi.
+Team Kill (qisqacha TK) - siz bilan bir tashkilotda/oilada bo‘lgan o‘yinchilarni o‘ldirish/o‘ldirishga urinish.
+Jazo: DEMORGAN - 30 daqiqagacha | Tashkilotda bo‘lsa - WARN.
+"""
+
+path = Path("/mnt/data/grand_mobile_qoidalari.txt")
+path.write_text(rules, encoding="utf-8")
+print(f"Tayyor: {path}")
+print(f"Hajmi: {path.stat().st_size:,} bayt")
