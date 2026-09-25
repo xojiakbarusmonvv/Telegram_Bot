@@ -82,7 +82,7 @@ except Exception as e:
 
 chat_histories = {}
 
-# Har bir foydalanuvchining oxirgi rasmi
+# Foydalanuvchining oxirgi rasmi
 user_images = {}
 
 
@@ -137,6 +137,7 @@ def is_grand_mobile_question(text):
 # =========================================================
 
 def find_relevant_rules(question, max_chars=14000):
+
     if not grand_mobile_rules:
         return ""
 
@@ -150,11 +151,13 @@ def find_relevant_rules(question, max_chars=14000):
     scored = []
 
     for line in lines:
+
         line_lower = line.lower()
 
         score = 0
 
         for word in words:
+
             if len(word) >= 2 and word in line_lower:
                 score += 1
 
@@ -171,6 +174,7 @@ def find_relevant_rules(question, max_chars=14000):
     total = 0
 
     for score, line in scored:
+
         if total + len(line) > max_chars:
             break
 
@@ -180,7 +184,6 @@ def find_relevant_rules(question, max_chars=14000):
     if selected:
         return "\n".join(selected)
 
-    # Agar mos qator topilmasa, qoidalarning boshidan beramiz
     return grand_mobile_rules[:max_chars]
 
 
@@ -192,8 +195,6 @@ GENERAL_SYSTEM_PROMPT = """
 Sen Telegramdagi universal AI yordamchisan.
 
 Foydalanuvchi qaysi tilda yozsa, shu tilda javob ber.
-
-Asosiy qoidalar:
 
 1. O'zbekcha savolga o'zbekcha javob ber.
 2. Ruscha savolga ruscha javob ber.
@@ -214,12 +215,14 @@ Sen Grand Mobile server qoidalari bo'yicha yordamchisan.
 Foydalanuvchi savoliga faqat berilgan Grand Mobile qoidalariga
 asoslanib javob ber.
 
-Javobda quyidagilarni aniq ko'rsatishga harakat qil:
+Javobda:
 
 - Qaysi qoida buzilgan
-- Qoida raqami, agar mavjud bo'lsa
+- Qoida raqami
 - Jazosi
 - Qisqa tushuntirish
+
+ni ko'rsat.
 
 Agar qoidalarda aniq javob bo'lmasa:
 
@@ -228,10 +231,6 @@ Agar qoidalarda aniq javob bo'lmasa:
 deb ayt.
 
 Qoidani o'zingcha o'ylab topma.
-
-Agar foydalanuvchi RP, MG, DM, PG, DB, SK, RK, TK,
-NonRP kabi terminlardan foydalansa, ularning qoidalar faylidagi
-ma'nosidan foydalan.
 """
 
 
@@ -255,24 +254,21 @@ Men bilan:
 🌍 Tarjima
 💻 Dasturlash
 📖 Umumiy bilim
-🖼 Rasmga matn qo‘shish
+🖼 Rasm tahrirlash
 
-kabi ishlarni qilishing mumkin.
+mumkin.
 
-Grand Mobile bo‘yicha:
-👉 RP nima?
-👉 DM jazosi qancha?
-👉 GZ qoidasi qanday?
+Rasmga masalan:
 
-deb so‘rashing mumkin.
+👉 pastiga Xojiakbar deb yoz
+👉 o'rtasiga SALOM deb yoz
+👉 ustiga TEST deb yoz
 
-Rasm yuborsang, unga nima yozish kerakligini ayt.
-Masalan:
+Yoki mavjud ismni almashtirish:
 
-"pastiga Xojiakbar deb yoz"
-"o'rtasiga Salom deb yoz"
-"ustiga TEST deb yoz"
+👉 Pasidagi Xumo_Xusniddovni Xojiakbar_Usmonvv qilib tahrirla
 """
+
 
     await update.message.reply_text(text)
 
@@ -299,22 +295,34 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def get_font(size=50):
 
     font_paths = [
+
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+
         "/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf",
+
     ]
 
     for path in font_paths:
+
         if os.path.exists(path):
-            return ImageFont.truetype(path, size)
+
+            return ImageFont.truetype(
+                path,
+                size
+            )
 
     return ImageFont.load_default()
 
 
 # =========================================================
-# RASMGA MATN YOZISH
+# ODDIY RASMGA MATN YOZISH
 # =========================================================
 
-def add_text_to_image(image_bytes, text, position="bottom"):
+def add_text_to_image(
+    image_bytes,
+    text,
+    position="bottom"
+):
 
     image = Image.open(
         io.BytesIO(image_bytes)
@@ -322,7 +330,6 @@ def add_text_to_image(image_bytes, text, position="bottom"):
 
     draw = ImageDraw.Draw(image)
 
-    # Matn juda uzun bo'lsa kichraytiramiz
     font_size = 60
 
     if len(text) > 25:
@@ -348,15 +355,17 @@ def add_text_to_image(image_bytes, text, position="bottom"):
     x = (image_width - text_width) // 2
 
     if position == "top":
+
         y = 30
 
     elif position == "middle":
+
         y = (image_height - text_height) // 2
 
     else:
+
         y = image_height - text_height - 40
 
-    # Qora kontur + oq yozuv
     draw.text(
         (x, y),
         text,
@@ -380,7 +389,60 @@ def add_text_to_image(image_bytes, text, position="bottom"):
 
 
 # =========================================================
-# RASM BUYRUG'INI ANIQLASH
+# YANGI:
+# "ESKI ISMNI YANGI ISMGA ALMASHTIR"
+# BUYRUG'INI ANIQLASH
+# =========================================================
+
+def extract_replace_command(command):
+
+    command = command.strip()
+
+    patterns = [
+
+        # Pasidagi Xumo_Xusniddovni Xojiakbar_Usmonvv qilib tahrirla
+        r"pasidagi\s+(.+?)\s+(?:ni\s+)?(.+?)\s+qilib\s+tahrirla$",
+
+        # Pastidagi Xumo_Xusniddovni Xojiakbar_Usmonvv qilib o'zgartir
+        r"pastidagi\s+(.+?)\s+(?:ni\s+)?(.+?)\s+qilib\s+(?:o['’`]?zgartir|almashtir)$",
+
+        # Pasidagi Xumo_Xusniddovni Xojiakbar_Usmonvv ga almashtir
+        r"pasidagi\s+(.+?)\s+(.+?)\s+ga\s+almashtir$",
+
+        # Pastidagi Xumo_Xusniddovni Xojiakbar_Usmonvv qilib yoz
+        r"pastidagi\s+(.+?)\s+(.+?)\s+qilib\s+yoz$",
+
+        # Xumo_Xusniddovni Xojiakbar_Usmonvv ga almashtir
+        r"(.+?)\s+(.+?)\s+ga\s+almashtir$",
+
+    ]
+
+    for pattern in patterns:
+
+        match = re.search(
+            pattern,
+            command,
+            re.IGNORECASE
+        )
+
+        if match:
+
+            old_text = match.group(1).strip()
+            new_text = match.group(2).strip()
+
+            if old_text and new_text:
+
+                return (
+                    old_text,
+                    new_text,
+                    "bottom"
+                )
+
+    return None, None, None
+
+
+# =========================================================
+# ODDIY RASM BUYRUG'INI ANIQLASH
 # =========================================================
 
 def extract_image_text(command):
@@ -406,6 +468,16 @@ def extract_image_text(command):
 
         (
             r"tagiga\s+(.+?)\s+yoz$",
+            "bottom"
+        ),
+
+        (
+            r"pasiga\s+(.+?)\s+deb\s+yoz$",
+            "bottom"
+        ),
+
+        (
+            r"pasiga\s+(.+?)\s+yoz$",
             "bottom"
         ),
 
@@ -453,9 +525,209 @@ def extract_image_text(command):
             text = match.group(1).strip()
 
             if text:
+
                 return text, position
 
     return None, None
+
+
+# =========================================================
+# YANGI:
+# ESKI YOZUV JOYIGA YANGI YOZUV QO'YISH
+#
+# Hozircha eski yozuvni avtomatik OCR bilan topmaydi.
+# Foydalanuvchi "pasidagi" desa pastki qismdan foydalanadi.
+# =========================================================
+
+def replace_bottom_text(
+    image_bytes,
+    old_text,
+    new_text
+):
+
+    image = Image.open(
+        io.BytesIO(image_bytes)
+    ).convert("RGB")
+
+    draw = ImageDraw.Draw(image)
+
+    width, height = image.size
+
+    # -----------------------------------------------------
+    # Yangi yozuv uchun font
+    # -----------------------------------------------------
+
+    font_size = 55
+
+    if len(new_text) > 25:
+        font_size = 45
+
+    if len(new_text) > 40:
+        font_size = 35
+
+    font = get_font(font_size)
+
+    # -----------------------------------------------------
+    # Eski ism uzunligiga qarab taxminiy maydon
+    # -----------------------------------------------------
+
+    old_font = get_font(font_size)
+
+    old_bbox = draw.textbbox(
+        (0, 0),
+        old_text,
+        font=old_font
+    )
+
+    old_width = old_bbox[2] - old_bbox[0]
+    old_height = old_bbox[3] - old_bbox[1]
+
+    # Yangi yozuv markazda bo'ladi
+    new_bbox = draw.textbbox(
+        (0, 0),
+        new_text,
+        font=font,
+        stroke_width=2
+    )
+
+    new_width = new_bbox[2] - new_bbox[0]
+    new_height = new_bbox[3] - new_bbox[1]
+
+    # -----------------------------------------------------
+    # Pastki qismdagi yozuv joyini taxmin qilish
+    # -----------------------------------------------------
+
+    old_x = (width - old_width) // 2
+
+    old_y = height - old_height - 45
+
+    # Biroz kattaroq tozalash maydoni
+    padding_x = 30
+    padding_y = 20
+
+    left = max(
+        0,
+        old_x - padding_x
+    )
+
+    top = max(
+        0,
+        old_y - padding_y
+    )
+
+    right = min(
+        width,
+        old_x + old_width + padding_x
+    )
+
+    bottom = min(
+        height,
+        old_y + old_height + padding_y
+    )
+
+    # -----------------------------------------------------
+    # FONNI TIKLASH
+    #
+    # Rasmning shu joyiga yaqin fon rangidan foydalanamiz.
+    # -----------------------------------------------------
+
+    sample_y = max(
+        0,
+        top - 15
+    )
+
+    sample_box = image.crop(
+        (
+            left,
+            sample_y,
+            right,
+            min(
+                height,
+                sample_y + 10
+            )
+        )
+    )
+
+    # O'rtacha rangni topamiz
+    pixels = list(
+        sample_box.getdata()
+    )
+
+    if pixels:
+
+        avg_r = sum(
+            p[0] for p in pixels
+        ) // len(pixels)
+
+        avg_g = sum(
+            p[1] for p in pixels
+        ) // len(pixels)
+
+        avg_b = sum(
+            p[2] for p in pixels
+        ) // len(pixels)
+
+        background = (
+            avg_r,
+            avg_g,
+            avg_b
+        )
+
+    else:
+
+        background = (
+            255,
+            255,
+            255
+        )
+
+    # Tozalash
+    draw.rectangle(
+        (
+            left,
+            top,
+            right,
+            bottom
+        ),
+        fill=background
+    )
+
+    # -----------------------------------------------------
+    # YANGI YOZUV
+    # -----------------------------------------------------
+
+    new_x = (
+        width - new_width
+    ) // 2
+
+    new_y = (
+        old_y
+        + (old_height - new_height) // 2
+    )
+
+    draw.text(
+        (
+            new_x,
+            new_y
+        ),
+        new_text,
+        font=font,
+        fill="white",
+        stroke_width=4,
+        stroke_fill="black"
+    )
+
+    output = io.BytesIO()
+
+    image.save(
+        output,
+        format="JPEG",
+        quality=95
+    )
+
+    output.seek(0)
+
+    return output
 
 
 # =========================================================
@@ -477,40 +749,73 @@ async def handle_photo(
 
     image_bytes = await telegram_file.download_as_bytearray()
 
-    user_images[user_id] = bytes(image_bytes)
-
-    await update.message.reply_text(
-        "🖼 Rasm qabul qilindi.\n\n"
-        "Endi rasmga nima qilishni yoz.\n\n"
-        "Masalan:\n"
-        "👉 pastiga Xojiakbar deb yoz\n"
-        "👉 o'rtasiga SALOM deb yoz\n"
-        "👉 ustiga TEST deb yoz"
+    user_images[user_id] = bytes(
+        image_bytes
     )
 
-
-# =========================================================
-# MATN XABAR
-# =========================================================
-
-async def handle_message(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
-
-    if not update.message or not update.message.text:
-        return
-
-    user_id = update.effective_user.id
-    text = update.message.text.strip()
-
     # -----------------------------------------------------
-    # RASM BUYRUG'I
+    # ENG MUHIM QISM:
+    # RASM BILAN BIRGA CAPTION KELGAN BO'LSA,
+    # UNI HAM SAQLAYMIZ
     # -----------------------------------------------------
 
-    if user_id in user_images:
+    caption = update.message.caption
 
-        image_text, position = extract_image_text(text)
+    if caption:
+
+        caption = caption.strip()
+
+        # Avval almashtirish buyrug'ini tekshiramiz
+
+        old_text, new_text, position = (
+            extract_replace_command(
+                caption
+            )
+        )
+
+        if old_text and new_text:
+
+            try:
+
+                result = replace_bottom_text(
+                    user_images[user_id],
+                    old_text,
+                    new_text
+                )
+
+                await update.message.reply_photo(
+                    photo=result,
+                    caption=(
+                        "✅ Ism tahrirlandi!\n\n"
+                        f"Eski: {old_text}\n"
+                        f"Yangi: {new_text}"
+                    )
+                )
+
+                del user_images[user_id]
+
+                return
+
+            except Exception as e:
+
+                print(
+                    "RASM ALMASHTIRISH XATOSI:",
+                    e
+                )
+
+                await update.message.reply_text(
+                    "❌ Ismni almashtirishda xatolik bo'ldi."
+                )
+
+                return
+
+        # Oddiy rasm buyrug'i
+
+        image_text, position = (
+            extract_image_text(
+                caption
+            )
+        )
 
         if image_text:
 
@@ -533,7 +838,135 @@ async def handle_message(
 
             except Exception as e:
 
-                print("RASM XATOSI:", e)
+                print(
+                    "RASM XATOSI:",
+                    e
+                )
+
+                await update.message.reply_text(
+                    "❌ Rasmni o'zgartirishda xatolik bo'ldi."
+                )
+
+                return
+
+    # -----------------------------------------------------
+    # AGAR CAPTION YO'Q BO'LSA
+    # -----------------------------------------------------
+
+    await update.message.reply_text(
+        "🖼 Rasm qabul qilindi.\n\n"
+        "Endi nima qilishni yoz.\n\n"
+        "Masalan:\n"
+        "👉 pastiga Xojiakbar deb yoz\n"
+        "👉 o'rtasiga SALOM deb yoz\n"
+        "👉 ustiga TEST deb yoz\n\n"
+        "Yoki:\n"
+        "👉 Pasidagi Eski_Ismni Yangi_Ism qilib tahrirla"
+    )
+
+
+# =========================================================
+# MATN XABAR
+# =========================================================
+
+async def handle_message(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
+
+    if not update.message:
+        return
+
+    if not update.message.text:
+        return
+
+    user_id = update.effective_user.id
+
+    text = update.message.text.strip()
+
+    # -----------------------------------------------------
+    # RASM BILAN ISHLASH
+    # -----------------------------------------------------
+
+    if user_id in user_images:
+
+        # Avval ismni almashtirishni tekshiramiz
+
+        old_text, new_text, position = (
+            extract_replace_command(
+                text
+            )
+        )
+
+        if old_text and new_text:
+
+            try:
+
+                result = replace_bottom_text(
+                    user_images[user_id],
+                    old_text,
+                    new_text
+                )
+
+                await update.message.reply_photo(
+                    photo=result,
+                    caption=(
+                        "✅ Tayyor!\n\n"
+                        f"Eski: {old_text}\n"
+                        f"Yangi: {new_text}"
+                    )
+                )
+
+                del user_images[user_id]
+
+                return
+
+            except Exception as e:
+
+                print(
+                    "RASM ALMASHTIRISH XATOSI:",
+                    e
+                )
+
+                await update.message.reply_text(
+                    "❌ Rasmni tahrirlashda xatolik bo'ldi."
+                )
+
+                return
+
+        # Oddiy yozuv
+
+        image_text, position = (
+            extract_image_text(
+                text
+            )
+        )
+
+        if image_text:
+
+            try:
+
+                result = add_text_to_image(
+                    user_images[user_id],
+                    image_text,
+                    position
+                )
+
+                await update.message.reply_photo(
+                    photo=result,
+                    caption="✅ Tayyor!"
+                )
+
+                del user_images[user_id]
+
+                return
+
+            except Exception as e:
+
+                print(
+                    "RASM XATOSI:",
+                    e
+                )
 
                 await update.message.reply_text(
                     "❌ Rasmni o'zgartirishda xatolik bo'ldi."
@@ -546,6 +979,7 @@ async def handle_message(
     # -----------------------------------------------------
 
     if user_id not in chat_histories:
+
         chat_histories[user_id] = []
 
     history = chat_histories[user_id]
@@ -556,7 +990,9 @@ async def handle_message(
 
     if is_grand_mobile_question(text):
 
-        relevant_rules = find_relevant_rules(text)
+        relevant_rules = find_relevant_rules(
+            text
+        )
 
         system_prompt = (
             GRAND_MOBILE_SYSTEM_PROMPT
@@ -575,7 +1011,6 @@ async def handle_message(
         }
     )
 
-    # Oxirgi 10 ta xabarni saqlaymiz
     history = history[-10:]
 
     messages = [
@@ -600,10 +1035,18 @@ async def handle_message(
             max_tokens=1200
         )
 
-        answer = response.choices[0].message.content
+        answer = (
+            response
+            .choices[0]
+            .message
+            .content
+        )
 
         if not answer:
-            answer = "Javob olishda xatolik yuz berdi."
+
+            answer = (
+                "Javob olishda xatolik yuz berdi."
+            )
 
         history.append(
             {
@@ -612,7 +1055,9 @@ async def handle_message(
             }
         )
 
-        chat_histories[user_id] = history[-10:]
+        chat_histories[user_id] = (
+            history[-10:]
+        )
 
         await update.message.reply_text(
             answer
@@ -620,7 +1065,10 @@ async def handle_message(
 
     except Exception as e:
 
-        print("GROQ XATOSI:", e)
+        print(
+            "GROQ XATOSI:",
+            e
+        )
 
         await update.message.reply_text(
             "❌ AI bilan bog‘lanishda xatolik yuz berdi."
@@ -654,7 +1102,9 @@ def main():
 
     application = (
         Application.builder()
-        .token(TELEGRAM_TOKEN)
+        .token(
+            TELEGRAM_TOKEN
+        )
         .build()
     )
 
@@ -672,6 +1122,7 @@ def main():
         )
     )
 
+    # RASM
     application.add_handler(
         MessageHandler(
             filters.PHOTO,
@@ -679,9 +1130,11 @@ def main():
         )
     )
 
+    # MATN
     application.add_handler(
         MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
+            filters.TEXT
+            & ~filters.COMMAND,
             handle_message
         )
     )
@@ -698,6 +1151,10 @@ def main():
         drop_pending_updates=True
     )
 
+
+# =========================================================
+# START
+# =========================================================
 
 if __name__ == "__main__":
     main()
